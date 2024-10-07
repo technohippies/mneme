@@ -1,0 +1,120 @@
+{
+  "languageForEnglish": "English",
+  "englishFor": "English for {{language}}",
+  
+  "profile": {
+    "title": "Profile",
+    "getAName": "Get Name",
+    "upgradeName": "Upgrade Name",
+    "displaySocials": "Display your socials on your Ethereum profile",
+    "xPlaceholder": "X handle (e.g., scarlett_x)",
+    "nostrPlaceholder": "Nostr npub (e.g., npub4a2d...xyz)",
+    "weiboPlaceholder": "Weibo handle",
+    "wechatPlaceholder": "WeChat ID",
+    "save": "Save",
+    "xHandlePlaceholder": "X handle (e.g., scarlett_x)",
+    "nostrHandlePlaceholder": "Nostr npub (e.g., npub4a2d...xyz)",
+    "weiboHandlePlaceholder": "Weibo handle",
+    "wechatHandlePlaceholder": "WeChat ID",
+    "following": "Following",
+    "followers": "Followers",
+    "topStreak": "Top Streak",
+    "editProfile": "Edit Profile",
+    "doneEditing": "Done Editing"
+  },
+  
+  "domain": {
+    "title": "Domain",
+    "claimFreeDomain": "Claim Free Domain",
+    "enterSubdomain": "Enter subdomain",
+    "checkAvailability": "Check Availability",
+    "domainAvailable": "Domain is available!",
+    "domainNotAvailable": "Domain is not available.",
+    "claimDomain": "Claim Domain",
+    "premiumDomains": "Premium Domains",
+    "currentDomain": "Your current domain:",
+    "buy": "Buy",
+    "searchDomains": "Search domains"
+  },
+  
+  "settings": {
+    "title": "Settings",
+    "learningEnglish": "I'm learning English",
+    "otherLanguagesSoon": "Support for other target languages coming soon!",
+    "openSource": "The project is open source so anyone can contribute, add, and fix code and translations.",
+    "nativeSpeaker": "I'm a native speaker of:"
+  },
+  
+  "microphonePermission": {
+    "start": "Start",
+    "requestingAccess": "Requesting Access..."
+  },
+  
+  "loading": "Loading...",
+  
+  "auth": {
+    "scarlettImageAlt": "Scarlett with Apple",
+    "meetScarlett": "Karaoke to learn English",
+    "karaokeDescription": "Study your favorite songs to win NFTs!",
+    "freeAndOpenSource": "Free and open source",
+    "popularSongs": "Popular songs",
+    "winPrizes": "Win Pokémon cards and NFTs!",
+    "signToContinue": "Sign to Continue",
+    "ceramicDescription": "This saves your progress to a database that you own.",
+    "signing": "Signing...",
+    "sign": "Sign"
+  },
+  
+  "karaokeControls": {
+    "noPhrases": "No phrases available for this song.",
+    "loading": "Loading...",
+    "addSong": "Add Song",
+    "added": "Added",
+    "adding": "Adding...",
+    "practice": "Practice",
+    "again": "Again",
+    "good": "Good",
+    "stopPractice": "Stop Practice"
+  },
+  
+  "scoreDisplay": {
+    "title": "Score",
+    "processing": "Processing...",
+    "error": "Error",
+    "unavailable": "Score Unavailable"
+  },
+  
+  "deckStudy": {
+    "deckNotFound": "Deck not found",
+    "phrases": "Phrases ({{count}})",
+    "addDeck": "Add Deck",
+    "startStudying": "Start Studying",
+    "continueStudying": "Continue Studying",
+    "studyAgain": "Study Again",
+    "newCards": "New",
+    "learningCards": "Learning",
+    "dueCards": "Due",
+    "deckAdded": "Deck added",
+    "errorAddingDeck": "Error adding deck. Please try again."
+  },
+  
+  "decksList": {
+    "yourSongs": "Your Songs",
+    "noSongsAdded": "You haven't added any songs to learn.",
+    "browse": "Browse",
+    "new": "New",
+    "learn": "Learn",
+    "due": "Due"
+  },
+  
+  "songList": {
+    "allSongs": "All Songs",
+    "noSongsAvailable": "No songs available at the moment.",
+    "errorLoadingSongs": "Failed to load songs. Please try again later."
+  },
+  
+  "errors": {
+    "scoreTimeout": "Score not received in time. Please try again.",
+    "scoreError": "Error receiving score. Please try again."
+  }
+}

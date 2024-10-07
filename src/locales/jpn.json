@@ -1,0 +1,112 @@
+{
+  "languageForEnglish": "英語学習",
+  "englishFor": "{{language}}のための英語",
+  
+  "profile": {
+    "title": "プロフィール",
+    "getAName": "名前を取得",
+    "upgradeName": "名前をアップグレード",
+    "displaySocials": "イーサリアムプロフィールにSNSを表示",
+    "xHandlePlaceholder": "Xのハンドル（例：scarlett_x）",
+    "nostrHandlePlaceholder": "Nostr npub（例：npub4a2d...xyz）",
+    "weiboHandlePlaceholder": "Weiboのハンドル",
+    "wechatHandlePlaceholder": "WeChat ID",
+    "save": "保存"
+  },
+  
+  "domain": {
+    "title": "ドメイン",
+    "claimFreeDomain": "無料ドメインを取得",
+    "enterSubdomain": "サブドメインを入力",
+    "checkAvailability": "利用可能性を確認",
+    "domainAvailable": "ドメインは利用可能です！",
+    "domainNotAvailable": "ドメインは利用できません。",
+    "claimDomain": "ドメインを取得",
+    "premiumDomains": "プレミアムドメイン",
+    "currentDomain": "現在のドメイン：",
+    "buy": "購入",
+    "searchDomains": "ドメインを検索"
+  },
+  
+  "settings": {
+    "title": "設定",
+    "learningEnglish": "英語を学んでいます",
+    "otherLanguagesSoon": "他の目標言語のサポートは近日公開予定です！",
+    "openSource": "このプロジェクトはオープンソースなので、誰でもコードや翻訳の貢献、追加、修正ができます。",
+    "nativeSpeaker": "私の母語は："
+  },
+  
+  "microphonePermission": {
+    "start": "開始",
+    "requestingAccess": "アクセスをリクエスト中..."
+  },
+  
+  "loading": "読み込み中...",
+  
+  "auth": {
+    "scarlettImageAlt": "リンゴを持つスカーレット",
+    "meetScarlett": "あなたの言語チューター、スカーレットに会いましょう",
+    "karaokeDescription": "お気に入りの曲の歌詞でカラオケをして言語を学びましょう！",
+    "freeAndOpenSource": "無料でオープンソース",
+    "popularSongs": "人気の曲",
+    "winPrizes": "ポケモンカードとNFTを獲得しよう！",
+    "signToContinue": "続けるにはサインしてください",
+    "xmtpDescription": "XMTPはイーサリアムウォレット間でメッセージを送受信します。",
+    "ceramicDescription": "Ceramicはあなたのデータを保存し、他のdappsにインポートできるようにします。",
+    "signing": "サイン中...",
+    "sign": "サイン"
+  },
+  
+  "karaokeControls": {
+    "noPhrases": "この曲には利用可能なフレーズがありません。",
+    "loading": "読み込み中...",
+    "addSong": "曲を追加",
+    "added": "追加済み",
+    "adding": "追加中...",
+    "practice": "練習",
+    "again": "もう一度",
+    "good": "良い",
+    "stopPractice": "練習を停止"
+  },
+  
+  "scoreDisplay": {
+    "title": "スコア",
+    "processing": "処理中...",
+    "error": "エラー",
+    "unavailable": "スコア利用不可"
+  },
+  
+  "deckStudy": {
+    "deckNotFound": "デッキが見つかりません",
+    "phrases": "フレーズ ({{count}})",
+    "addDeck": "デッキを追加",
+    "startStudying": "学習を開始",
+    "continueStudying": "学習を続ける",
+    "studyAgain": "もう一度学習",
+    "newCards": "新規",
+    "learningCards": "学習中",
+    "dueCards": "復習予定",
+    "deckAdded": "デッキが追加されました",
+    "errorAddingDeck": "デッキの追加中にエラーが発生しました。もう��度お試しください。"
+  },
+  
+  "decksList": {
+    "yourSongs": "あなたの曲",
+    "noSongsAdded": "学習する曲がまだ追加されていません。",
+    "browse": "ブラウズ",
+    "new": "新規",
+    "learn": "学習中",
+    "due": "復習予定"
+  },
+  
+  "songList": {
+    "allSongs": "すべての曲",
+    "noSongsAvailable": "現在利用可能な曲はありません。",
+    "errorLoadingSongs": "曲の読み込みに失敗しました。後でもう一度お試しください。"
+  },
+  
+  "errors": {
+    "scoreTimeout": "スコアを時間内に受信できませんでした。もう一度お試しください。",
+    "scoreError": "スコアの受信中にエラーが発生しました。もう一度お試しください。"
+  }
+}

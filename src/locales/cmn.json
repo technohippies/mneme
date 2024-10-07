@@ -1,0 +1,112 @@
+{
+  "languageForEnglish": "英语学习",
+  "englishFor": "{{language}}英语学习",
+  
+  "profile": {
+    "title": "个人资料",
+    "getAName": "获取名称",
+    "upgradeName": "升级名称",
+    "displaySocials": "在您的以太坊个人资料上展示您的社交媒体",
+    "xHandlePlaceholder": "X 用户名（如 scarlett_x）",
+    "nostrHandlePlaceholder": "Nostr npub（如 npub4a2d...xyz）",
+    "weiboHandlePlaceholder": "微博用户名",
+    "wechatHandlePlaceholder": "微信 ID",
+    "save": "保存"
+  },
+  
+  "domain": {
+    "title": "域名",
+    "claimFreeDomain": "申请免费域名",
+    "enterSubdomain": "输入子域名",
+    "checkAvailability": "检查可用性",
+    "domainAvailable": "域名可用！",
+    "domainNotAvailable": "域名不可用。",
+    "claimDomain": "申请名",
+    "premiumDomains": "高级域名",
+    "currentDomain": "您当前的域名：",
+    "buy": "购买",
+    "searchDomains": "搜索域名"
+  },
+  
+  "settings": {
+    "title": "设置",
+    "learningEnglish": "我正在学习英语",
+    "otherLanguagesSoon": "即将支持其他目标语言。",
+    "openSource": "这是一个开源项目，任何人都可以贡献和修复翻译。",
+    "nativeSpeaker": "我的母语是："
+  },
+  
+  "microphonePermission": {
+    "start": "开始",
+    "requestingAccess": "正在请求访问权限..."
+  },
+  
+  "loading": "加载中...",
+  
+  "auth": {
+    "scarlettImageAlt": "拿着苹果的Scarlett",
+    "meetScarlett": "认识Scarlett，您的语言导师",
+    "karaokeDescription": "通过卡拉OK演唱您喜爱的歌曲歌词来学习语言！",
+    "freeAndOpenSource": "免费和开源",
+    "popularSongs": "流行歌曲",
+    "winPrizes": "赢取宝可梦卡片和NFT！",
+    "signToContinue": "签名以继续",
+    "xmtpDescription": "XMTP在以太坊钱包之间发送和接收消息。",
+    "ceramicDescription": "Ceramic保存您的数据，以便您可以将其导入其他dapps。",
+    "signing": "正在签名...",
+    "sign": "签名"
+  },
+  
+  "karaokeControls": {
+    "noPhrases": "这首歌没有可用的歌词。",
+    "loading": "加载中...",
+    "addSong": "添加歌曲",
+    "added": "已添加",
+    "adding": "添加中...",
+    "practice": "练习",
+    "again": "再来一次",
+    "good": "很好",
+    "stopPractice": "停止练习"
+  },
+  
+  "scoreDisplay": {
+    "title": "得分",
+    "processing": "处理中...",
+    "error": "错误",
+    "unavailable": "分数不可用"
+  },
+  
+  "deckStudy": {
+    "deckNotFound": "未找到卡组",
+    "phrases": "短语 ({{count}})",
+    "addDeck": "添加卡组",
+    "startStudying": "开始学习",
+    "continueStudying": "继续学习",
+    "studyAgain": "再次学习",
+    "newCards": "新卡片",
+    "learningCards": "学习中",
+    "dueCards": "待复习",
+    "deckAdded": "卡组已添加",
+    "errorAddingDeck": "添加卡组时出错。请重试。"
+  },
+  
+  "decksList": {
+    "yourSongs": "您的歌曲",
+    "noSongsAdded": "您还没有添加任何歌曲来学习。",
+    "browse": "浏览",
+    "new": "新",
+    "learn": "学习",
+    "due": "待复习"
+  },
+  
+  "songList": {
+    "allSongs": "所有歌曲",
+    "noSongsAvailable": "目前没有可用的歌曲。",
+    "errorLoadingSongs": "加载歌曲失败。请稍后再试。"
+  },
+  
+  "errors": {
+    "scoreTimeout": "未及时收到分数。请重试。",
+    "scoreError": "接收分数时出错。请重试。"
+  }
+}

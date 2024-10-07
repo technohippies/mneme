@@ -1,0 +1,112 @@
+{
+  "languageForEnglish": "영어",
+  "englishFor": "{{language}}를 위한 영어",
+  
+  "profile": {
+    "title": "프로필",
+    "getAName": "이름 얻기",
+    "upgradeName": "이름 업그레이드",
+    "displaySocials": "이더리움 프로필에 소셜 미디어 표시",
+    "xHandlePlaceholder": "X 핸들 (예: scarlett_x)",
+    "nostrHandlePlaceholder": "Nostr npub (예: npub4a2d...xyz)",
+    "weiboHandlePlaceholder": "Weibo 핸들",
+    "wechatHandlePlaceholder": "WeChat ID",
+    "save": "저장"
+  },
+  
+  "domain": {
+    "title": "도메인",
+    "claimFreeDomain": "무료 도메인 받기",
+    "enterSubdomain": "서브도메인 입력",
+    "checkAvailability": "가용성 확인",
+    "domainAvailable": "도메인 사용 가능!",
+    "domainNotAvailable": "도메인을 사용할 수 없습니다.",
+    "claimDomain": "도메인 받기",
+    "premiumDomains": "프리미엄 도메인",
+    "currentDomain": "현재 도메인:",
+    "buy": "구매",
+    "searchDomains": "도메인 검색"
+  },
+  
+  "settings": {
+    "title": "설정",
+    "learningEnglish": "영어를 배우고 있습니다",
+    "otherLanguagesSoon": "다른 목표 언어에 대한 지원이 곧 제공됩니다!",
+    "openSource": "이 프로젝트는 오픈 소스이므로 누구나 코드와 번역을 기여, 추가 및 수정할 수 있습니다.",
+    "nativeSpeaker": "저는 다음 언어의 원어민입니다:"
+  },
+  
+  "microphonePermission": {
+    "start": "시작",
+    "requestingAccess": "접근 요청 중..."
+  },
+  
+  "loading": "로딩 중...",
+  
+  "auth": {
+    "scarlettImageAlt": "사과를 든 스칼렛",
+    "meetScarlett": "당신의 언어 튜터, 스칼렛을 만세요",
+    "karaokeDescription": "좋아하는 노래의 가사로 노래방을 하며 언어를 배우세요!",
+    "freeAndOpenSource": "무료 및 오픈 소스",
+    "popularSongs": "인기 있는 노래들",
+    "winPrizes": "포켓몬 카드와 NFT를 획득하세요!",
+    "signToContinue": "계속하려면 서명하세요",
+    "xmtpDescription": "XMTP는 이더리움 지갑 간에 메시지를 주고받습니다.",
+    "ceramicDescription": "Ceramic은 귀하의 데이터를 저장하여 다른 dapps로 가져올 수 있게 합니다.",
+    "signing": "서명 중...",
+    "sign": "서명"
+  },
+  
+  "karaokeControls": {
+    "noPhrases": "이 노래에 사용 가능한 구절이 없습니다.",
+    "loading": "로딩 중...",
+    "addSong": "노래 추가",
+    "added": "추가됨",
+    "adding": "추가 중...",
+    "practice": "연습",
+    "again": "다시",
+    "good": "좋아요",
+    "stopPractice": "연습 중지"
+  },
+  
+  "scoreDisplay": {
+    "title": "점수",
+    "processing": "처리 중...",
+    "error": "오류",
+    "unavailable": "점수 이용 불가"
+  },
+  
+  "deckStudy": {
+    "deckNotFound": "덱을 찾을 수 없습니다",
+    "phrases": "구문 ({{count}})",
+    "addDeck": "덱 추가",
+    "startStudying": "학습 시작",
+    "continueStudying": "학습 계속하기",
+    "studyAgain": "다시 학습하기",
+    "newCards": "새 카드",
+    "learningCards": "학습 중",
+    "dueCards": "복습 예정",
+    "deckAdded": "덱이 추가되었습니다",
+    "errorAddingDeck": "덱 추가 중 오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  
+  "decksList": {
+    "yourSongs": "내 노래",
+    "noSongsAdded": "학습할 노래를 아직 추가하지 않았습니다.",
+    "browse": "둘러보기",
+    "new": "새 카드",
+    "learn": "학습 중",
+    "due": "복습 예정"
+  },
+  
+  "songList": {
+    "allSongs": "모든 노래",
+    "noSongsAvailable": "현재 사용 가능한 노래가 없습니다.",
+    "errorLoadingSongs": "노래를 불러오는 데 실패했습니다. 나중에 다시 시도해 주세요."
+  },
+  
+  "errors": {
+    "scoreTimeout": "점수를 제시간에 받지 못했습니다. 다시 시도해 주세요.",
+    "scoreError": "점수 수신 중 오류가 발생했습니다. 다시 시도해 주세요."
+  }
+}

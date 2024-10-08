@@ -5,12 +5,11 @@
   "type": "module",
   "license": "AGPL-3.0",
   "scripts": {
+    "postinstall": "yarn build",
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

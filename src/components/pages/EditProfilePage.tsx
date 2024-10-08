@@ -14,7 +14,7 @@ import {
 import { Camera } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import { getName, setName, uploadToPinata, checkDomainAvailability } from "../../services/namestoneService";
+import { getName, setName, claimName, uploadToPinata, checkDomainAvailability } from "../../services/namestoneService";
 import { useAuth } from '../../contexts/AuthContext';
 import { useDebounce } from "../../hooks/useDebounce";
 import CloseHeader from "../layout/CloseHeader";
@@ -41,7 +41,6 @@ export function EditProfilePage() {
   const [coverUrl, setCoverUrl] = useState<string>('/images/user_cover.png');
   const [isDomainAvailable, setIsDomainAvailable] = useState<boolean | null>(null);
   const [isCheckingDomain, setIsCheckingDomain] = useState(false);
-  const [names, setNames] = useState<string[]>([]);
   const [hasExistingName, setHasExistingName] = useState(false);
   const [isAvatarUploading, setIsAvatarUploading] = useState(false);
   const [isCoverUploading, setIsCoverUploading] = useState(false);
@@ -88,7 +87,6 @@ export function EditProfilePage() {
     try {
       const data = await getName(address);
       if (data && Array.isArray(data) && data.length > 0) {
-        setNames(data.map(record => record.name));
         const latestRecord = data[data.length - 1];
         setHasExistingName(true);
         form.reset({
@@ -192,8 +190,7 @@ export function EditProfilePage() {
   const onSubmit = useCallback(async (data: z.infer<typeof formSchema>) => {
     setIsSaving(true);
     try {
-      const success = await setName({
-        domain: 'vstudent.eth',
+      const nameData = {
         name: data.domain,
         address: address,
         text_records: {
@@ -204,7 +201,15 @@ export function EditProfilePage() {
           avatar: avatarUrl || '/images/avatar.png',
           cover: coverUrl || '/images/user_cover.png',
         }
-      });
+      };
+
+      let success;
+      if (hasExistingName) {
+        success = await setName(nameData);
+      } else {
+        success = await claimName(nameData);
+      }
+
       if (success) {
         console.log('Profile updated successfully');
         navigate('/profile');
@@ -219,20 +224,17 @@ export function EditProfilePage() {
     } finally {
       setIsSaving(false);
     }
-  }, [address, avatarUrl, coverUrl, navigate]);
+  }, [address, avatarUrl, coverUrl, navigate, hasExistingName]);
 
   return (
     <div className="bg-neutral-900 min-h-screen w-full text-white">
-      <CloseHeader onAction={() => navigate('/profile')} type="close" fallbackPath="/profile" />
+      <CloseHeader 
+        onAction={() => navigate('/profile')} 
+        type="close" 
+        fallbackPath="/profile"
+      />
       <div className="p-4 pb-24">
         <div className="max-w-2xl mx-auto">
-          {names.length > 1 && (
-            <div className="mb-4">
-              <p className="text-sm text-neutral-400">
-                Other names associated with this address: {names.filter(name => name !== form.getValues().domain).join(', ')}
-              </p>
-            </div>
-          )}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-2">
               <div className="flex justify-between mb-8 gap-4">

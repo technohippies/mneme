@@ -2,34 +2,37 @@ const NAMESTONE_API_URL = 'https://crashing-market-brief.functions.on-fleek.app'
 const FLEEK_FUNCTION_URL = 'https://prehistoric-lock-harsh.functions.on-fleek.app';
 
 export async function getName(address: string): Promise<any[] | null> {
-    console.log(`getName called with address: ${address}`);
-    if (!address) {
-        console.error('getName called with empty address');
-        return null;
-    }
-    try {
-        const response = await fetch(`${NAMESTONE_API_URL}/get-names?domain=vstudent.eth&address=${address}`, {
-            headers: { 'Authorization': process.env.NAMESTONE_API_KEY || '' }
-        });
-        console.log(`getName API response status: ${response.status}`);
+  console.log(`getName called with address: ${address}`);
+  if (!address) {
+      console.error('getName called with empty address');
+      return null;
+  }
+  try {
+      const response = await fetch(`${NAMESTONE_API_URL}/get-names?address=${address}&domain=vstudent.eth`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
+      console.log(`getName API response status: ${response.status}`);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const data = await response.json();
-        console.log(`getName API response data:`, JSON.stringify(data, null, 2));
+      const data = await response.json();
+      console.log(`getName API response data:`, JSON.stringify(data, null, 2));
 
-        if (data && Array.isArray(data) && data.length > 0) {
-            console.log(`Returning name records:`, data);
-            return data;
-        }
-        console.log(`No name found for address: ${address}`);
-        return null;
-    } catch (error) {
-        console.error('Error fetching name:', error);
-        return null;
-    }
+      if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
+          console.log(`Returning name records:`, data.data);
+          return data.data;
+      }
+      console.log(`No name found for address: ${address}`);
+      return null;
+  } catch (error) {
+      console.error('Error fetching name:', error);
+      return null;
+  }
 }
 
 export async function getTextRecords(address: string): Promise<Record<string, string>> {
@@ -64,36 +67,66 @@ export async function getTextRecords(address: string): Promise<Record<string, st
 }
 
 export async function setName(data: {
-    domain: string;
-    name: string;
-    address: string;
-    text_records?: Record<string, string>;
-    contenthash?: string;
-    coin_types?: Record<string, string>;
+  name: string;
+  address: string;
+  text_records?: Record<string, string>;
+  contenthash?: string;
+  coin_types?: Record<string, string>;
 }): Promise<boolean> {
-    console.log(`setName called with data:`, JSON.stringify(data, null, 2));
-    try {
-        const response = await fetch(`${NAMESTONE_API_URL}/set-name`, {
-            method: 'POST',
-            headers: {
-                'Authorization': process.env.NAMESTONE_API_KEY || '',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        console.log(`setName API response status: ${response.status}`);
+  console.log(`setName called with data:`, JSON.stringify(data, null, 2));
+  try {
+    const response = await fetch(`${NAMESTONE_API_URL}/set-name`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': process.env.NAMESTONE_API_KEY || ''
+      },
+      body: JSON.stringify(data)
+    });
+    console.log(`setName API response status: ${response.status}`);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log(`setName API response data:`, JSON.stringify(result, null, 2));
-        return result.success;
-    } catch (error) {
-        console.error('Error setting name:', error);
-        return false;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const result = await response.json();
+    console.log(`setName API response data:`, JSON.stringify(result, null, 2));
+    return result.success;
+  } catch (error) {
+    console.error('Error setting name:', error);
+    return false;
+  }
+}
+
+export async function claimName(data: {
+  name: string;
+  address: string;
+  text_records?: Record<string, string>;
+  contenthash?: string;
+}): Promise<boolean> {
+  console.log(`claimName called with data:`, JSON.stringify(data, null, 2));
+  try {
+    const response = await fetch(`${NAMESTONE_API_URL}/claim`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': process.env.NAMESTONE_API_KEY || ''
+      },
+      body: JSON.stringify(data)
+    });
+    console.log(`claimName API response status: ${response.status}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log(`claimName API response data:`, JSON.stringify(result, null, 2));
+    return result.success;
+  } catch (error) {
+    console.error('Error claiming name:', error);
+    return false;
+  }
 }
 
 export async function uploadToPinata(file: File): Promise<string> {
@@ -199,7 +232,6 @@ export async function checkDomainAvailability(name: string): Promise<boolean> {
     const response = await fetch(`${NAMESTONE_API_URL}/check`, {
       method: 'POST',
       headers: { 
-        'Authorization': process.env.NAMESTONE_API_KEY || '',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ name })

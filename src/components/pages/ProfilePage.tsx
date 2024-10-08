@@ -29,7 +29,6 @@ export function ProfilePage() {
   const [stats, setStats] = useState({ topStreak: 0, followers: 0, following: 0 });
   const { address: currentUserAddress } = useAccount();
   const [hasEFPList, setHasEFPList] = useState<boolean | null>(null);
-  const [names, setNames] = useState<string[]>([]);
 
   const loadProfile = useCallback(async () => {
     setIsLoading(true);
@@ -44,7 +43,6 @@ export function ProfilePage() {
       console.log('Streak Data:', JSON.stringify(streakData, null, 2));
 
       if (nameData && nameData.length > 0) {
-        setNames(nameData.map(record => record.name));
         const latestRecord = nameData[nameData.length - 1];
         setUsername(latestRecord.name);
         setAvatarUrl(latestRecord.text_records?.avatar || '/images/avatar.png');
@@ -118,11 +116,6 @@ export function ProfilePage() {
               username || "No username found"
             )}
           </h2>
-          {names.length > 1 && (
-            <p className="text-sm text-neutral-400 mb-2">
-              Other names: {names.filter(name => name !== username).join(', ')}
-            </p>
-          )}
           <p 
             className="text-sm text-neutral-400 cursor-pointer hover:text-neutral-300 flex items-center justify-center"
             onClick={copyAddressToClipboard}

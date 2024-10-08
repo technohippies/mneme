@@ -9,7 +9,7 @@ import { DeckType, PhraseStatus } from '../../types';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
-import { truncateTitle } from '../../lib/utils'; // Make sure this utility function is available
+import { truncateTitle } from '@/lib/utils'; // Make sure this utility function is available
 
 // Register the quantum loader
 quantum.register();

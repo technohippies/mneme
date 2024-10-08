@@ -12,7 +12,6 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="h-screen flex flex-col bg-neutral-900 text-neutral-200">
       <CloseHeader 
-        title={t('settings.title')} 
         onAction={() => navigate(-1)}
         type="back"
       />

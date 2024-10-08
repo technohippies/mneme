@@ -251,7 +251,7 @@ const FlashcardsPage: React.FC = () => {
   if (flashcards.length === 0) {
     return (
       <div className="h-screen flex flex-col bg-neutral-900 text-white">
-        <CloseHeader onAction={handleClose} type="close" title="Flashcards" />
+        <CloseHeader onAction={handleClose} type="close" />
         <div className="flex-grow flex items-center justify-center">
           <p>No flashcards available to study at this time.</p>
         </div>

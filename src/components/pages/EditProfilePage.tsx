@@ -131,7 +131,6 @@ export function EditProfilePage() {
       console.log('New avatar URL:', newAvatarUrl);
 
       const success = await setName({
-        domain: 'vstudent.eth',
         name: form.getValues().domain,
         address: address,
         text_records: {
@@ -165,7 +164,6 @@ export function EditProfilePage() {
       console.log('New cover URL:', newCoverUrl);
 
       const success = await setName({
-        domain: 'vstudent.eth',
         name: form.getValues().domain,
         address: address,
         text_records: {

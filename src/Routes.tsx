@@ -10,10 +10,13 @@ import FlashcardsPage from './components/pages/FlashcardsPage';
 import StudyCompletionPage from './components/pages/StudyCompletionPage';
 import SongListPage from './components/pages/SongListPage';
 import StorePage from './components/pages/StorePage';
+import { Navigate } from 'react-router-dom';
+import KeenSlider from './components/containers/KeenSlider';
 
 export function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<KeenSlider songs={[]} phrases={[]} />} />
       <Route path="/streak" element={<StreakPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/domain" element={<DomainPage />} />
@@ -25,6 +28,8 @@ export function AppRoutes() {
       <Route path="/deck/:geniusSlug/flashcards" element={<FlashcardsPage />} />
       <Route path="/study-completion/:geniusSlug" element={<StudyCompletionPage />} />
       <Route path="/songs" element={<SongListPage />} />
+      
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

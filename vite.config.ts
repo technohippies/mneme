@@ -3,9 +3,20 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
+import { writeFileSync } from 'fs';
+
+// Custom plugin to generate _redirects file
+const generateRedirects = () => {
+  return {
+    name: 'generate-redirects',
+    closeBundle() {
+      writeFileSync('dist/_redirects', '/* /index.html 200');
+    }
+  };
+};
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), generateRedirects()],
   optimizeDeps: {
     exclude: ["@xmtp/user-preferences-bindings-wasm"],
   },

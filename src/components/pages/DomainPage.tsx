@@ -49,7 +49,6 @@ const DomainPage: React.FC = () => {
     console.log(`Attempting to claim domain: ${values.subdomain}.vstudent.eth`);
     try {
       const success = await setName({
-        domain: 'vstudent.eth',
         name: `${values.subdomain}.vstudent.eth`,
         address: user?.address || '',
         text_records: {}

@@ -188,11 +188,10 @@ function readFileAsBase64(file: File): Promise<string> {
 export async function updateAvatar(formData: FormData): Promise<{ success: boolean; error?: string }> {
   console.log(`updateAvatar called with formData:`, Object.fromEntries(formData));
   try {
-    const name = formData.get('name');
     const address = formData.get('address');
     const avatarUrl = formData.get('avatarUrl');
 
-    if (!name || !address || !avatarUrl) {
+    if (!address || !avatarUrl) {
       throw new Error('Missing required data for avatar update');
     }
 
@@ -204,7 +203,6 @@ export async function updateAvatar(formData: FormData): Promise<{ success: boole
       },
       body: JSON.stringify({
         domain: 'vstudent.eth',
-        name: name,
         address: address,
         text_records: {
           avatar: avatarUrl
@@ -248,5 +246,68 @@ export async function checkDomainAvailability(name: string): Promise<boolean> {
   } catch (error) {
     console.error('Error checking domain availability:', error);
     return false;
+  }
+}
+
+export async function getProfileData(identifier: string): Promise<any | null> {
+  console.log(`getProfileData called with identifier: ${identifier}`);
+  if (!identifier) {
+    console.error('getProfileData called with empty identifier');
+    return null;
+  }
+  try {
+    const isAddress = /^0x[a-fA-F0-9]{40}$/.test(identifier);
+    let queryParam;
+    if (isAddress) {
+      queryParam = `address=${identifier}`;
+    } else {
+      // If it's not an address, it must be a name
+      // Remove .vstudent.eth if it's present
+      const name = identifier.replace('.vstudent.eth', '');
+      queryParam = `name=${name}`;
+    }
+    
+    const url = `${NAMESTONE_API_URL}/get-names?${queryParam}&domain=vstudent.eth`;
+    console.log(`Fetching profile data from: ${url}`);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': process.env.NAMESTONE_API_KEY || ''
+      }
+    });
+    console.log(`getProfileData API response status: ${response.status}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(`getProfileData API response data:`, JSON.stringify(data, null, 2));
+
+    if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
+      console.log(`Returning profile data:`, data.data[0]);
+      return {
+        ...data.data[0],
+        names: data.data.map((item: any) => `${item.name}.${item.domain}`)
+      };
+    } else {
+      // Return a default profile structure when no Namestone data is found
+      console.log(`No Namestone profile found for: ${identifier}. Returning default profile.`);
+      return {
+        address: isAddress ? identifier : '',
+        name: isAddress ? '' : identifier,
+        domain: 'vstudent.eth',
+        text_records: {
+          avatar: '/images/avatar.png',
+          cover: '/images/user_cover.png'
+        },
+        names: []
+      };
+    }
+  } catch (error) {
+    console.error('Error fetching profile data:', error);
+    return null;
   }
 }

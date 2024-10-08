@@ -28,6 +28,7 @@ export function AppRoutes() {
       <Route path="/deck/:geniusSlug/flashcards" element={<FlashcardsPage />} />
       <Route path="/study-completion/:geniusSlug" element={<StudyCompletionPage />} />
       <Route path="/songs" element={<SongListPage />} />
+      <Route path="/u/:identifier" element={<ProfilePage />} />
       
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

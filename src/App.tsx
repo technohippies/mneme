@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useMemo } from 'react';
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter, BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { quantum } from 'ldrs'
 import { useAuth } from './contexts/AuthContext';
 
@@ -71,7 +71,7 @@ const AppContent: React.FC = () => {
     </div>
   )), [user]);
 
-  return (
+  const routeContent = (
     <AuthWrapper>
       <Routes>
         <Route path="/" element={
@@ -96,13 +96,10 @@ const AppContent: React.FC = () => {
             <DecksListPage />
           </LayoutWrapper>
         } />
-        <Route path="/profile" element={
-          <LayoutWrapper>
-            <ProfilePage />
-          </LayoutWrapper>
-        } />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/edit" element={<EditProfilePage />} />
-        <Route path="/store" element={<StorePage />} />  // Add this new route
+        <Route path="/store" element={<StorePage />} />
+        <Route path="/u/:identifier" element={<ProfilePage />} />
         <Route path="/deck/:geniusSlug" element={<DeckStudyPage />} />
         <Route path="/deck/:geniusSlug/flashcards" element={<FlashcardsPage />} />
         <Route path="/study-completion/:geniusSlug" element={<StudyCompletionPage />} />
@@ -111,16 +108,25 @@ const AppContent: React.FC = () => {
             <SongListPage />
           </LayoutWrapper>
         } />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthWrapper>
   );
+
+  return routeContent;
 };
 
 const App: React.FC = () => {
-  return (
-    <Router>
+  const isHashRouter = window.location.hash.startsWith('#/');
+
+  return isHashRouter ? (
+    <HashRouter>
       <AppContent />
-    </Router>
+    </HashRouter>
+  ) : (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 };
 

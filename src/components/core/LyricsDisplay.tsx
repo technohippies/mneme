@@ -71,7 +71,7 @@ export const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
   };
 
   return (
-    <div className="lyrics-display w-full h-full flex items-center justify-center">
+    <div className="lyrics-display w-full h-full flex items-center ">
       <div className="max-w-full max-h-full overflow-y-auto px-4">
         {lyrics.map((lyric, index) => (
           <div key={index} className="mb-4">

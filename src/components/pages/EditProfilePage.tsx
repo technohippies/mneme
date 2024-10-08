@@ -14,7 +14,7 @@ import {
 import { Camera } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import { getName, setName, claimName, uploadToPinata, checkDomainAvailability } from "../../services/namestoneService";
+import { getName, setName, claimName, uploadToPinata, checkDomainAvailability, updateAvatar } from "../../services/namestoneService";
 import { useAuth } from '../../contexts/AuthContext';
 import { useDebounce } from "../../hooks/useDebounce";
 import CloseHeader from "../layout/CloseHeader";
@@ -46,7 +46,7 @@ export function EditProfilePage() {
   const [isCoverUploading, setIsCoverUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [hasEFPList, setHasEFPList] = useState<boolean | null>(null);
-
+  const [hasUpdatedProfile, setHasUpdatedProfile] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,6 +57,8 @@ export function EditProfilePage() {
       wechatHandle: "",
     },
   });
+
+  const isDomainSet = form.watch('domain') !== '';
 
   const debouncedDomain = useDebounce(form.watch('domain'), 500);
 
@@ -130,27 +132,24 @@ export function EditProfilePage() {
       setAvatarUrl(newAvatarUrl);
       console.log('New avatar URL:', newAvatarUrl);
 
-      const success = await setName({
-        name: form.getValues().domain,
-        address: address,
-        text_records: {
-          ...form.getValues(),
-          avatar: newAvatarUrl || '/images/avatar.png',
-          cover: coverUrl || '/images/user_cover.png'
-        }
-      });
+      const formData = new FormData();
+      formData.append('address', address);
+      formData.append('avatarUrl', newAvatarUrl);
 
-      if (success) {
+      const result = await updateAvatar(formData);
+
+      if (result.success) {
         console.log('Avatar updated successfully in Namestone');
       } else {
-        console.error('Failed to update avatar in Namestone');
+        console.error('Failed to update avatar in Namestone:', result.error);
       }
     } catch (error) {
       console.error('Error updating avatar:', error);
     } finally {
       setIsAvatarUploading(false);
     }
-  }, [address, form, coverUrl]);
+    setHasUpdatedProfile(true);
+  }, [address]);
 
   const handleCoverUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -183,6 +182,7 @@ export function EditProfilePage() {
     } finally {
       setIsCoverUploading(false);
     }
+    setHasUpdatedProfile(true);
   }, [address, form, avatarUrl]);
 
   const onSubmit = useCallback(async (data: z.infer<typeof formSchema>) => {
@@ -298,7 +298,9 @@ export function EditProfilePage() {
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <FormLabel>Domain Name</FormLabel>
+                <FormLabel className={hasUpdatedProfile && !isDomainSet ? "text-orange-500" : ""}>
+                  Domain Name (Required)
+                </FormLabel>
                 <Button
                   type="button"
                   onClick={() => navigate('/store')}
@@ -338,6 +340,9 @@ export function EditProfilePage() {
                           </p>
                         )}
                       </div>
+                    )}
+                    {hasUpdatedProfile && !isDomainSet && (
+                      <p className="text-orange-500 text-xs mt-1">Please choose a domain name to save your profile updates</p>
                     )}
                   </FormItem>
                 )}
@@ -423,7 +428,7 @@ export function EditProfilePage() {
             variant="blue" 
             className="w-full" 
             onClick={form.handleSubmit(onSubmit)}
-            disabled={isSaving || isAvatarUploading || isCoverUploading}
+            disabled={isSaving || isAvatarUploading || isCoverUploading || !isDomainSet}
           >
             {isSaving ? (
               <l-tailspin
@@ -432,6 +437,8 @@ export function EditProfilePage() {
                 speed="0.9" 
                 color="white" 
               ></l-tailspin>
+            ) : !isDomainSet ? (
+              'Choose a Domain to Save'
             ) : (
               'Save'
             )}

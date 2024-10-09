@@ -163,8 +163,20 @@ const DeckStudyPage: React.FC = () => {
         <ArrowLeft className="w-6 h-6" />
       </button>
       <div className="flex-grow p-4 overflow-auto">
-        <h1 className="text-xl font-bold ">{deck?.name}</h1>
-        <h2 className="text-lg text-neutral-400 mb-4">{deck?.artist}</h2>
+        <div className="flex items-center mb-4">
+          <img
+            src={`https://warp.dolpin.io/ipfs/${deck.img_cid}`}
+            alt={deck.name}
+            className="w-36 h-36 object-cover rounded-lg mr-4"
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+              e.currentTarget.src = "/images/placeholder.png";
+            }}
+          />
+          <div>
+            <h1 className="text-xl font-bold">{deck?.name}</h1>
+            <h2 className="text-lg text-neutral-400">{deck?.artist}</h2>
+          </div>
+        </div>
         {phraseStatus && (
           <div>
             <FlashcardStatusDisplay status={phraseStatus} isLoading={false} />

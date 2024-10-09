@@ -6,9 +6,9 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useAuth } from '../../contexts/AuthContext';
 import { 
-  getFollowers,
-  getFollowing,
-  checkIfUserHasList
+  checkIfUserHasList,
+  getEFPUserStats,
+  getEFPUserENS
 } from '../../services/efp/efpService';
 import { getStreakData } from '../../services/orbis/streakService';
 import { useAccount } from 'wagmi';
@@ -21,7 +21,6 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -51,26 +50,35 @@ export function ProfilePage() {
     try {
       let profileIdentifier = identifier || user?.address || '';
       
-      const data = await getProfileData(profileIdentifier);
-      console.log('Profile Data:', JSON.stringify(data, null, 2));
+      const [namestoneData, efpStats, efpENS] = await Promise.all([
+        getProfileData(profileIdentifier),
+        getEFPUserStats(profileIdentifier),
+        getEFPUserENS(profileIdentifier)
+      ]);
 
-      if (data) {
-        setProfileData(data);
-        setIsOwnProfile(data.address === currentUserAddress);
+      console.log('Namestone Profile Data:', JSON.stringify(namestoneData, null, 2));
+      console.log('EFP Stats:', JSON.stringify(efpStats, null, 2));
+      console.log('EFP ENS Data:', JSON.stringify(efpENS, null, 2));
 
-        const [streakData, followers, following] = await Promise.all([
-          getStreakData(data.address),
-          getFollowers(data.address),
-          getFollowing(data.address)
-        ]);
-        
+      if (namestoneData || efpENS) {
+        const mergedProfileData = {
+          ...namestoneData,
+          ens: efpENS,
+          address: namestoneData?.address || efpENS?.address
+        };
+        setProfileData(mergedProfileData);
+        setIsOwnProfile(mergedProfileData.address === currentUserAddress);
+
+        const streakData = await getStreakData(mergedProfileData.address);
+        console.log('Streak Data:', streakData);
+
         setStats({
           topStreak: streakData.topStreak,
-          followers: followers.length,
-          following: following.length
+          followers: parseInt(efpStats?.followers_count || '0'),
+          following: parseInt(efpStats?.following_count || '0')
         });
 
-        const userHasList = await checkIfUserHasList(data.address);
+        const userHasList = await checkIfUserHasList(mergedProfileData.address);
         setHasEFPList(userHasList);
       } else {
         console.error('No profile data returned');
@@ -232,7 +240,7 @@ export function ProfilePage() {
       <main className="flex-grow">
         <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-500">
           <img 
-            src={profileData.text_records?.cover || '/images/user_cover.png'} 
+            src={profileData.ens?.records?.header || profileData.text_records?.cover || '/images/user_cover.png'} 
             alt="Cover" 
             className="w-full h-full object-cover" 
           />
@@ -241,16 +249,16 @@ export function ProfilePage() {
           <div className="flex flex-col items-center mb-4">
             <Avatar className="h-32 w-32 mb-4 border-4 border-neutral-900">
               <AvatarImage 
-                src={profileData.text_records?.avatar || '/images/avatar.png'} 
+                src={profileData.ens?.avatar || profileData.text_records?.avatar || '/images/avatar.png'} 
                 alt="Profile" 
               />
-              <AvatarFallback>{profileData.name?.charAt(0) || '?'}</AvatarFallback>
+              <AvatarFallback>{profileData.ens?.name?.charAt(0) || profileData.name?.charAt(0) || '?'}</AvatarFallback>
             </Avatar>
             <div className="flex items-center justify-center">
               <h2 className="text-xl font-bold mr-2">
-                {profileData.name && profileData.domain
+                {profileData.ens?.name || (profileData.name && profileData.domain
                   ? `${profileData.name}.${profileData.domain}`
-                  : truncateAddress(profileData.address)}
+                  : truncateAddress(profileData.address))}
               </h2>
               <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerTrigger asChild>
@@ -266,6 +274,11 @@ export function ProfilePage() {
                 <ShareDrawerContent />
               </Drawer>
             </div>
+            {profileData.ens?.records?.description && (
+              <p className="text-sm text-neutral-300 mt-2 text-center">
+                {profileData.ens.records.description}
+              </p>
+            )}
           </div>
           <div className="flex justify-center my-2">
             <div className="text-center mx-4 w-24">

@@ -11,6 +11,7 @@ import { PhraseStatus, Phrase, DeckType, Song } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import FlashcardStatusDisplay from '../core/FlashcardStatusDisplay';
 import AudioButton from '../core/AudioButton'; // Import the new AudioButton component
+import { Button } from "../ui/button"; // Make sure you have this Button component
 
 quantum.register();
 
@@ -130,6 +131,13 @@ const DeckStudyPage: React.FC = () => {
     // The actual audio playing logic is now handled in the AudioButton component
   }, []);
 
+  const handleMatchClick = useCallback(() => {
+    if (geniusSlug) {
+      console.log('[DeckStudyPage] Navigating to match study with geniusSlug:', geniusSlug);
+      navigate(`/deck/${geniusSlug}/match`, { state: { geniusSlug } });
+    }
+  }, [geniusSlug, navigate]);
+
   if (isLoading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-neutral-900">
@@ -183,20 +191,28 @@ const DeckStudyPage: React.FC = () => {
           </div>
         )}
         {!isInitialized && !isInUserDeck ? (
-          <button
+          <Button
             onClick={handleAddDeck}
             className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
           >
             {t('deckStudy.addDeck')}
-          </button>
+          </Button>
         ) : (
-          <button
-            onClick={handleStudyClick}
-            className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {phraseStatus && phraseStatus.studied_today >= 20 ? t('deckStudy.studyAgain') : 
-             (phraseStatus && phraseStatus.studied_today > 0 ? t('deckStudy.continueStudying') : t('deckStudy.startStudying'))}
-          </button>
+          <>
+            <Button
+              onClick={handleStudyClick}
+              className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              {phraseStatus && phraseStatus.studied_today >= 20 ? t('deckStudy.studyFlashcardsAgain') : 
+               (phraseStatus && phraseStatus.studied_today > 0 ? t('deckStudy.continueFlashcards') : t('deckStudy.studyFlashcards'))}
+            </Button>
+            <Button
+              onClick={handleMatchClick}
+              className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+            >
+              {t('deckStudy.matchPhrases')}
+            </Button>
+          </>
         )}
         <div className="mt-8">
           <h2 className="text-lg font-semibold mb-4">{t('deckStudy.phrases', { count: phrases.length })}</h2>

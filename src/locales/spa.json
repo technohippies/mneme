@@ -1,0 +1,128 @@
+{
+  "languageForEnglish": "Inglés",
+  "englishFor": "Inglés para {{language}}",
+  
+  "profile": {
+    "title": "Perfil",
+    "getAName": "Obtener Nombre",
+    "upgradeName": "Mejorar Nombre",
+    "displaySocials": "Mostrar tus redes sociales en tu perfil de Ethereum",
+    "xPlaceholder": "Usuario de X (ej., scarlett_x)",
+    "nostrPlaceholder": "Nostr npub (ej., npub4a2d...xyz)",
+    "weiboPlaceholder": "Usuario de Weibo",
+    "wechatPlaceholder": "ID de WeChat",
+    "save": "Guardar",
+    "xHandlePlaceholder": "Usuario de X (ej., scarlett_x)",
+    "nostrHandlePlaceholder": "Nostr npub (ej., npub4a2d...xyz)",
+    "weiboHandlePlaceholder": "Usuario de Weibo",
+    "wechatHandlePlaceholder": "ID de WeChat",
+    "following": "Siguiendo",
+    "followers": "Seguidores",
+    "topStreak": "Mejor Racha",
+    "editProfile": "Editar Perfil",
+    "doneEditing": "Terminar Edición"
+  },
+  
+  "domain": {
+    "title": "Dominio",
+    "claimFreeDomain": "Reclamar Dominio Gratis",
+    "enterSubdomain": "Ingresar subdominio",
+    "checkAvailability": "Verificar Disponibilidad",
+    "domainAvailable": "¡El dominio está disponible!",
+    "domainNotAvailable": "El dominio no está disponible.",
+    "claimDomain": "Reclamar Dominio",
+    "premiumDomains": "Dominios Premium",
+    "currentDomain": "Tu dominio actual:",
+    "buy": "Comprar",
+    "searchDomains": "Buscar dominios"
+  },
+  
+  "settings": {
+    "title": "Configuración",
+    "learningEnglish": "Estoy aprendiendo inglés",
+    "otherLanguagesSoon": "¡Pronto habrá soporte para otros idiomas objetivo!",
+    "openSource": "El proyecto es de código abierto, por lo que cualquiera puede contribuir, agregar y corregir código y traducciones.",
+    "nativeSpeaker": "Soy hablante nativo de:"
+  },
+  
+  "microphonePermission": {
+    "start": "Comenzar",
+    "requestingAccess": "Solicitando Acceso..."
+  },
+  
+  "loading": "Cargando...",
+  
+  "auth": {
+    "scarlettImageAlt": "Scarlett con Manzana",
+    "meetScarlett": "Karaoke para aprender inglés",
+    "karaokeDescription": "¡Estudia tus canciones favoritas para ganar NFTs!",
+    "freeAndOpenSource": "Gratis y de código abierto",
+    "popularSongs": "Canciones populares",
+    "winPrizes": "¡Gana cartas Pokémon y NFTs!",
+    "signToContinue": "Firma para Continuar",
+    "ceramicDescription": "Esto guarda tu progreso en una base de datos que te pertenece.",
+    "signing": "Firmando...",
+    "sign": "Firmar"
+  },
+  
+  "karaokeControls": {
+    "noPhrases": "No hay frases disponibles para esta canción.",
+    "loading": "Cargando...",
+    "addSong": "Agregar Canción",
+    "added": "Agregada",
+    "adding": "Agregando...",
+    "practice": "Practicar",
+    "again": "Otra vez",
+    "good": "Bien",
+    "stopPractice": "Detener Práctica"
+  },
+  
+  "scoreDisplay": {
+    "title": "Puntuación",
+    "processing": "Procesando...",
+    "error": "Error",
+    "unavailable": "Puntuación No Disponible"
+  },
+  
+  "deckStudy": {
+    "deckNotFound": "Mazo no encontrado",
+    "phrases": "Frases ({{count}})",
+    "addDeck": "Agregar Mazo",
+    "startStudying": "Comenzar a Estudiar",
+    "continueStudying": "Continuar Estudiando",
+    "studyAgain": "Estudiar de Nuevo",
+    "newCards": "Nuevas",
+    "learningCards": "Aprendiendo",
+    "dueCards": "Pendientes",
+    "deckAdded": "Mazo agregado",
+    "errorAddingDeck": "Error al agregar el mazo. Por favor, intenta de nuevo.",
+    "matchPhrases": "Jugar Emparejamiento",
+    "studyFlashcards": "Estudiar Tarjetas",
+    "continueFlashcards": "Continuar Tarjetas",
+    "studyFlashcardsAgain": "Estudiar Tarjetas de Nuevo"
+  },
+  
+  "decksList": {
+    "yourSongs": "Tus Canciones",
+    "noSongsAdded": "No has agregado ninguna canción para aprender.",
+    "browse": "Explorar",
+    "new": "Nuevas",
+    "learn": "Aprender",
+    "due": "Pendientes"
+  },
+  
+  "songList": {
+    "allSongs": "Todas las Canciones",
+    "noSongsAvailable": "No hay canciones disponibles en este momento.",
+    "errorLoadingSongs": "Error al cargar las canciones. Por favor, intenta de nuevo más tarde."
+  },
+  
+  "errors": {
+    "scoreTimeout": "No se recibió la puntuación a tiempo. Por favor, intenta de nuevo.",
+    "scoreError": "Error al recibir la puntuación. Por favor, intenta de nuevo."
+  },
+  
+  "matchStudy": {
+    "playAgain": "Jugar de Nuevo"
+  }
+}

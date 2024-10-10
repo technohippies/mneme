@@ -87,7 +87,11 @@
     "learningCards": "학습 중",
     "dueCards": "복습 예정",
     "deckAdded": "덱이 추가되었습니다",
-    "errorAddingDeck": "덱 추가 중 오류가 발생했습니다. 다시 시도해 주세요."
+    "errorAddingDeck": "덱 추가 중 오류가 발생했습니다. 다시 시도해 주세요.",
+    "matchPhrases": "매칭 게임 플레이",
+    "studyFlashcards": "플래시카드 학습",
+    "continueFlashcards": "플래시카드 계속하기",
+    "studyFlashcardsAgain": "플래시카드 다시 학습"
   },
   
   "decksList": {
@@ -108,5 +112,9 @@
   "errors": {
     "scoreTimeout": "점수를 제시간에 받지 못했습니다. 다시 시도해 주세요.",
     "scoreError": "점수 수신 중 오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  
+  "matchStudy": {
+    "playAgain": "다시 하기"
   }
 }

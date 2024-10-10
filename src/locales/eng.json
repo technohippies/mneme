@@ -95,7 +95,11 @@
     "learningCards": "Learning",
     "dueCards": "Due",
     "deckAdded": "Deck added",
-    "errorAddingDeck": "Error adding deck. Please try again."
+    "errorAddingDeck": "Error adding deck. Please try again.",
+    "matchPhrases": "Play Matching",
+    "studyFlashcards": "Study Flashcards",
+    "continueFlashcards": "Continue Flashcards",
+    "studyFlashcardsAgain": "Study Flashcards Again"
   },
   
   "decksList": {
@@ -116,5 +120,9 @@
   "errors": {
     "scoreTimeout": "Score not received in time. Please try again.",
     "scoreError": "Error receiving score. Please try again."
+  },
+  
+  "matchStudy": {
+    "playAgain": "Play Again"
   }
 }

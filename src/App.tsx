@@ -2,6 +2,7 @@ import React, {useEffect, useState, useMemo } from 'react';
 import { HashRouter, BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { quantum } from 'ldrs'
 import { useAuth } from './contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -21,11 +22,13 @@ import KeenSlider from './components/containers/KeenSlider';
 import SongListPage from './components/pages/SongListPage';
 import { EditProfilePage } from './components/pages/EditProfilePage';  // Add this import
 import StorePage from './components/pages/StorePage';  // Add this import
+import MatchStudyPage from './components/pages/MatchStudyPage';  // Add this import
 
 // Register the quantum loader
 quantum.register();
 
 const AppContent: React.FC = () => {
+  const { i18n } = useTranslation();
   const [songs, setSongs] = useState<Song[]>([]);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,6 +51,11 @@ const AppContent: React.FC = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const userLanguage = navigator.language.split('-')[0];
+    i18n.changeLanguage(userLanguage);
+  }, [i18n]);
 
   const LoadingScreen = useMemo(() => () => (
     <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 z-50">
@@ -108,6 +116,7 @@ const AppContent: React.FC = () => {
             <SongListPage />
           </LayoutWrapper>
         } />
+        <Route path="/deck/:geniusSlug/match" element={<MatchStudyPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthWrapper>

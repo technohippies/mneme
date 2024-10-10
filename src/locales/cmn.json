@@ -21,7 +21,7 @@
     "checkAvailability": "检查可用性",
     "domainAvailable": "域名可用！",
     "domainNotAvailable": "域名不可用。",
-    "claimDomain": "申请名",
+    "claimDomain": "申请",
     "premiumDomains": "高级域名",
     "currentDomain": "您当前的域名：",
     "buy": "购买",
@@ -87,7 +87,11 @@
     "learningCards": "学习中",
     "dueCards": "待复习",
     "deckAdded": "卡组已添加",
-    "errorAddingDeck": "添加卡组时出错。请重试。"
+    "errorAddingDeck": "添加卡组时出错。请重试。",
+    "matchPhrases": "玩配对游戏",
+    "studyFlashcards": "学习闪卡",
+    "continueFlashcards": "继续闪卡",
+    "studyFlashcardsAgain": "再次学习闪卡"
   },
   
   "decksList": {
@@ -107,6 +111,10 @@
   
   "errors": {
     "scoreTimeout": "未及时收到分数。请重试。",
-    "scoreError": "接收分数时出错。请重试。"
+    "scoreError": "接收分数时出��。请重试。"
+  },
+  
+  "matchStudy": {
+    "playAgain": "再玩一次"
   }
 }

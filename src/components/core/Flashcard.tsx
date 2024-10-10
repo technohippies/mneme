@@ -1,22 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '../ui/button';
 import { FlashcardProps } from '../../types';
-import RoundedAudioButton from './RoundedAudioButton';
+import { Volume2, Pause, Music } from 'lucide-react';
+import { dotStream } from 'ldrs';
+
+dotStream.register();
 
 export const Flashcard: React.FC<FlashcardProps> = (props) => {
     const [ttsAudio, setTtsAudio] = useState<HTMLAudioElement | null>(null);
     const [songAudio, setSongAudio] = useState<HTMLAudioElement | null>(null);
+    const [ttsLoading, setTtsLoading] = useState(false);
+    const [songLoading, setSongLoading] = useState(false);
     const prevIdRef = useRef<string | null>(null);
 
     useEffect(() => {
-        // Check if the card has changed
         if (props.id !== prevIdRef.current) {
             stopAllAudio();
-            // Update the ref to the current card id
             prevIdRef.current = props.id;
         }
 
-        // Cleanup function
         return () => {
             stopAllAudio();
         };
@@ -35,13 +36,24 @@ export const Flashcard: React.FC<FlashcardProps> = (props) => {
         setSongAudio(null);
     };
 
-    const handleAudioPlay = (audio: HTMLAudioElement, type: 'tts' | 'song') => {
+    const handleAudioPlay = (type: 'tts' | 'song') => {
         stopAllAudio();
-        if (type === 'tts') {
-            setTtsAudio(audio);
-        } else {
-            setSongAudio(audio);
-        }
+        const cid = type === 'tts' ? props.tts_cid : props.audio_cid;
+        if (!cid) return;
+
+        const setLoading = type === 'tts' ? setTtsLoading : setSongLoading;
+        const setAudio = type === 'tts' ? setTtsAudio : setSongAudio;
+
+        setLoading(true);
+        const audio = new Audio(`https://warp.dolpin.io/ipfs/${cid}`);
+        audio.oncanplaythrough = () => {
+            setLoading(false);
+            audio.play();
+            setAudio(audio);
+        };
+        audio.onended = () => {
+            setAudio(null);
+        };
     };
 
     const renderText = (text: string, textCmn: string) => {
@@ -58,69 +70,44 @@ export const Flashcard: React.FC<FlashcardProps> = (props) => {
         ));
     };
 
-    const handleFlip = () => {
-        stopAllAudio();
-        props.onFlip();
-    };
+    const renderAudioControl = (type: 'tts' | 'song') => {
+        const isPlaying = type === 'tts' ? !!ttsAudio : !!songAudio;
+        const isLoading = type === 'tts' ? ttsLoading : songLoading;
+        const Icon = type === 'tts' ? Volume2 : Music;
 
-    const handleAnswer = (callback: () => void) => {
-        stopAllAudio();
-        callback();
+        return (
+            <div 
+                className="flex-1 flex items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
+                onClick={() => handleAudioPlay(type)}
+            >
+                {isLoading ? (
+                    <l-dot-stream size="20" speed="2.5" color="#FFFFFF"></l-dot-stream>
+                ) : isPlaying ? (
+                    <Pause className="w-6 h-6 text-neutral-300" />
+                ) : (
+                    <Icon className="w-6 h-6 text-neutral-300" />
+                )}
+            </div>
+        );
     };
 
     return (
-        <div className="flex flex-col h-full w-full">
-            <div className="flex-grow bg-neutral-800 flex flex-col w-full h-full text-neutral-200">
-                <div className="flex-grow flex flex-col">
-                    <div className="flex-grow flex flex-col items-center justify-center p-4 overflow-y-auto">
-                        <div className="w-full flex flex-col items-center justify-center mb-4">
-                            {props.isFlipped ? renderText(props.text, props.text_cmn) : renderText(props.text, '')}
+        <div className="flex flex-col h-full w-full max-w-md mx-auto">
+            <div className="flex-grow flex flex-col">
+                <div className="flex-grow flex flex-col items-center justify-center p-4">
+                    <div className="w-full h-[400px] bg-neutral-800 rounded-2xl shadow-lg overflow-hidden flex flex-col">
+                        <div className="flex-grow flex flex-col items-center justify-center p-6 overflow-y-auto">
+                            <div className="w-full flex flex-col items-center justify-center">
+                                {props.isFlipped ? renderText(props.text, props.text_cmn) : renderText(props.text, '')}
+                            </div>
+                        </div>
+                        {/* Audio controls - integrated into the card */}
+                        <div className="h-14 bg-neutral-700 flex items-center">
+                            {renderAudioControl('tts')}
+                            <div className="w-px h-8 bg-neutral-600"></div>
+                            {renderAudioControl('song')}
                         </div>
                     </div>
-                    {/* Audio controls - fixed position */}
-                    <div className="flex justify-center items-center space-x-8 p-4">
-                        {props.tts_cid && (
-                            <RoundedAudioButton
-                                key={`tts-${props.id}`}
-                                cid={props.tts_cid}
-                                onPlay={(audio) => handleAudioPlay(audio, 'tts')}
-                                onStop={stopAllAudio}
-                            />
-                        )}
-                        {props.audio_cid && (
-                            <RoundedAudioButton
-                                key={`song-${props.id}`}
-                                cid={props.audio_cid}
-                                onPlay={(audio) => handleAudioPlay(audio, 'song')}
-                                onStop={stopAllAudio}
-                            />
-                        )}
-                    </div>
-                </div>
-                <div className="p-2 sm:p-4">
-                    {!props.isFlipped ? (
-                        <Button 
-                            className="w-full py-6 sm:py-6 text-base sm:text-lg bg-blue-600 hover:bg-blue-700 text-white font-bold"
-                            onClick={handleFlip}
-                        >
-                            Flip
-                        </Button>
-                    ) : (
-                        <div className="flex w-full space-x-2">
-                            <Button 
-                                className="w-1/2 py-6 sm:py-6 text-base sm:text-lg bg-neutral-600 hover:bg-neutral-700 text-white font-bold"
-                                onClick={() => handleAnswer(props.onAgain)}
-                            >
-                                Again
-                            </Button>
-                            <Button 
-                                className="w-1/2 py-6 sm:py-6 text-base sm:text-lg bg-blue-600 hover:bg-blue-700 text-white font-bold"
-                                onClick={() => handleAnswer(props.onGood)}
-                            >
-                                Good
-                            </Button>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

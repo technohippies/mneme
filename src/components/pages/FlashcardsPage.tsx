@@ -11,6 +11,7 @@ import { quantum } from 'ldrs';
 import { useAuthenticateCeramic } from '../../services/orbis/authService';
 import { createUserSongService } from '../../services/orbis/userSongService';
 import { songService } from '../../services/orbis/songService';
+import { Button } from '../ui/button';
 
 quantum.register();
 
@@ -262,24 +263,55 @@ const FlashcardsPage: React.FC = () => {
   const currentCard = flashcards[currentCardIndex];
 
   return (
-    <div className="h-screen flex flex-col bg-neutral-900">
+    <div className="min-h-screen flex flex-col bg-neutral-900">
       <CloseHeader onAction={handleClose} type="close" />
-      <div className="flex-grow flex flex-col overflow-hidden">
+      <div className="flex-grow flex flex-col items-center justify-center pb-4 px-4">
         {flashcards.length > 0 ? (
-          <Flashcard
-            id={currentCard.id}
-            text={currentCard.text}
-            text_cmn={currentCard.text_cmn}
-            tts_cid={currentCard.tts_cid}
-            audio_cid={currentCard.audio_cid}
-            background_image_cid={currentCard.background_image_cid}
-            isFlipped={flippedCards.has(currentCard.id)}
-            onFlip={() => handleFlip(currentCard.id)}
-            onAgain={() => handleAnswer(1)}
-            onGood={() => handleAnswer(3)}
-          />
+          <>
+            <Flashcard
+              id={currentCard.id}
+              text={currentCard.text}
+              text_cmn={currentCard.text_cmn}
+              tts_cid={currentCard.tts_cid}
+              audio_cid={currentCard.audio_cid}
+              background_image_cid={currentCard.background_image_cid}
+              isFlipped={flippedCards.has(currentCard.id)}
+              onFlip={() => handleFlip(currentCard.id)}
+              onAgain={() => handleAnswer(1)}
+              onGood={() => handleAnswer(3)}
+            />
+            {/* Action buttons - sticky at the bottom */}
+            <div className="fixed bottom-0 left-0 right-0 p-4 bg-neutral-900">
+              {!flippedCards.has(currentCard.id) ? (
+                <Button 
+                  variant="blue"
+                  className="w-full"
+                  onClick={() => handleFlip(currentCard.id)}
+                >
+                  Flip
+                </Button>
+              ) : (
+                <div className="flex w-full space-x-4">
+                  <Button 
+                    variant="secondary"
+                    className="w-1/2"
+                    onClick={() => handleAnswer(1)}
+                  >
+                    Again
+                  </Button>
+                  <Button 
+                    variant="blue"
+                    className="w-1/2"
+                    onClick={() => handleAnswer(3)}
+                  >
+                    Good
+                  </Button>
+                </div>
+              )}
+            </div>
+          </>
         ) : (
-          <div className="flex-grow flex items-center justify-center text-white">
+          <div className="text-white text-center">
             <p>No cards to study at this time.</p>
           </div>
         )}

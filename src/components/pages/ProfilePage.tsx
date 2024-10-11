@@ -26,6 +26,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "../../components/ui/drawer";
+import { motion } from 'framer-motion';
+import loadingImage from '/images/loading-image.png';
 
 // Register the orbit and dotStream loaders
 orbit.register();
@@ -210,7 +212,19 @@ export function ProfilePage() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen bg-neutral-900">
-        <l-orbit size="40" speed="1.5" color="white"></l-orbit>
+        <motion.img 
+          src={loadingImage} 
+          alt="Loading" 
+          className="w-48 h-48 object-contain"
+          animate={{
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
       </div>
     );
   }

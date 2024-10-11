@@ -7,6 +7,8 @@ import { getCurrentUserDID } from "../../services/orbis/config";
 import { useAuthenticateCeramic } from "../../services/orbis/authService";
 import { quantum } from "ldrs";
 import { useTranslation } from "react-i18next";
+import { motion } from 'framer-motion';
+import loadingImage from '/images/loading-image.png';
 
 quantum.register();
 
@@ -69,7 +71,19 @@ const StudyCompletionPage: React.FC = () => {
       <div className="flex flex-col h-screen bg-neutral-900 text-neutral-100">
         <CloseHeader onAction={handleClose} type="close" />
         <div className="flex-grow flex items-center justify-center">
-          <l-quantum size="45" speed="1.75" color="white"></l-quantum>
+          <motion.img 
+            src={loadingImage} 
+            alt="Loading" 
+            className="w-48 h-48 object-contain"
+            animate={{
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
         </div>
       </div>
     );

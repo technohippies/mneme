@@ -10,7 +10,9 @@ import { createUserSongService } from '../../services/orbis/userSongService';
 import { PhraseStatus, Phrase, DeckType, Song } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import FlashcardStatusDisplay from '../core/FlashcardStatusDisplay';
-import { Button } from "../ui/button"; // Make sure you have this Button component
+import { Button } from "../ui/button";
+import { motion } from 'framer-motion';
+import loadingImage from '/images/loading-image.png';
 
 quantum.register();
 dotStream.register();
@@ -181,7 +183,19 @@ const DeckStudyPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-neutral-900">
-        <l-quantum size="45" speed="1.75" color="white"></l-quantum>
+        <motion.img 
+          src={loadingImage} 
+          alt="Loading" 
+          className="w-48 h-48 object-contain"
+          animate={{
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
       </div>
     );
   }

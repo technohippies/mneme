@@ -1,8 +1,9 @@
 import React, {useEffect, useState, useMemo } from 'react';
 import { HashRouter, BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import { quantum } from 'ldrs'
 import { useAuth } from './contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion'; // Add this import
+import loadingImage from '/images/loading-image.png';
 
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -24,17 +25,12 @@ import { EditProfilePage } from './components/pages/EditProfilePage';  // Add th
 import StorePage from './components/pages/StorePage';  // Add this import
 import MatchStudyPage from './components/pages/MatchStudyPage';  // Add this import
 
-// Register the quantum loader
-quantum.register();
-
 const AppContent: React.FC = () => {
   const { i18n } = useTranslation();
   const [songs, setSongs] = useState<Song[]>([]);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
-
-  // Remove the useEffect hook that was calling setupXMTP
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,11 +55,19 @@ const AppContent: React.FC = () => {
 
   const LoadingScreen = useMemo(() => () => (
     <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 z-50">
-      <l-quantum
-        size="45"
-        speed="1.75" 
-        color="white" 
-      ></l-quantum>
+      <motion.img 
+        src={loadingImage} 
+        alt="Loading" 
+        className="w-48 h-48 object-contain"
+        animate={{
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
     </div>
   ), []);
 

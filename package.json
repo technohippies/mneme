@@ -9,7 +9,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -32,6 +34,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "buffer": "^6.0.3",
+    "framer-motion": "^11.11.8",
     "i18next": "^23.15.1",
     "install": "^0.13.0",
     "keen-slider": "^6.8.6",

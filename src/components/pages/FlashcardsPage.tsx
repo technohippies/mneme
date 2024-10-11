@@ -18,6 +18,8 @@ import { useAuthenticateCeramic } from "../../services/orbis/authService";
 import { createUserSongService } from "../../services/orbis/userSongService";
 import { songService } from "../../services/orbis/songService";
 import { Button } from "../ui/button";
+import { motion } from 'framer-motion';
+import loadingImage from '/images/loading-image.png';
 
 quantum.register();
 
@@ -310,7 +312,19 @@ const FlashcardsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-neutral-900">
-        <l-quantum size="45" speed="1.75" color="white"></l-quantum>
+        <motion.img 
+          src={loadingImage} 
+          alt="Loading" 
+          className="w-48 h-48 object-contain"
+          animate={{
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
       </div>
     );
   }

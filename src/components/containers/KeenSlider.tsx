@@ -9,6 +9,8 @@ import { userLearningDataService } from '../../services/orbis/userDataLearningSe
 import { useAuthenticateCeramic } from '../../services/orbis/authService';
 import { getCurrentUserDID } from '../../services/orbis/config';
 import { ExternalLink } from 'lucide-react';
+import { motion } from 'framer-motion';
+import loadingImage from '/images/loading-image.png';
 
 quantum.register();
 
@@ -96,12 +98,20 @@ const KeenSlider: React.FC<KeenSliderProps> = ({ songs, phrases }) => {
 
   if (isLoading) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-neutral-900">
-        <l-quantum
-          size="45"
-          speed="1.75" 
-          color="white" 
-        ></l-quantum>
+      <div className="h-full w-full flex flex-col items-center justify-center bg-neutral-900">
+        <motion.img 
+          src={loadingImage} 
+          alt="Loading" 
+          className="w-48 h-48 object-contain"
+          animate={{
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
       </div>
     );
   }

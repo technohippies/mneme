@@ -10,6 +10,8 @@ import { userLearningDataService } from '../../services/orbis/userDataLearningSe
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
 import { truncateTitle } from '@/lib/utils'; // Make sure this utility function is available
+import loadingImage from '/images/loading-image.png';
+import { motion } from 'framer-motion';
 
 // Register the quantum loader
 quantum.register();
@@ -79,12 +81,20 @@ const DecksListPage: React.FC = () => {
   );
 
   const LoadingScreen = useMemo(() => () => (
-    <div className="flex-grow flex items-center justify-center h-full">
-      <l-quantum
-        size="45"
-        speed="1.75" 
-        color="white" 
-      ></l-quantum>
+    <div className="flex-grow flex flex-col items-center justify-center h-full">
+      <motion.img 
+        src={loadingImage} 
+        alt="Loading" 
+        className="w-48 h-48 object-contain"
+        animate={{
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
     </div>
   ), []);
 

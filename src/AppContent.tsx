@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { quantum } from 'ldrs'
 import { useAuth } from './contexts/AuthContext';
 import { useTranslation } from 'react-i18next'; // Add this import
-
+import { motion } from 'framer-motion'; // Add this import
+import loadingImage from '/images/loading-image.png';
 
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -21,8 +21,6 @@ import FlashcardsPage from './components/pages/FlashcardsPage';
 import StudyCompletionPage from './components/pages/StudyCompletionPage';
 import KeenSlider from './components/containers/KeenSlider';
 import SongListPage from './components/pages/SongListPage';
-
-quantum.register();
 
 const AppContent: React.FC = () => {
   const [songs, setSongs] = useState<Song[]>([]);
@@ -48,13 +46,21 @@ const AppContent: React.FC = () => {
   }, []);
 
   const LoadingScreen = useMemo(() => () => (
-    <div className="flex-grow flex items-center justify-center h-screen">
-      <l-quantum
-        size="45"
-        speed="1.75" 
-        color="white" 
-      ></l-quantum>
-      <p>{t('loading')}</p> {/* Add this line to test translation */}
+    <div className="flex-grow flex flex-col items-center justify-center h-screen">
+      <motion.img 
+        src={loadingImage} 
+        alt="Loading" 
+        className="w-48 h-48 object-contain"
+        animate={{
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+      <p className="mt-4">{t('loading')}</p>
     </div>
   ), [t]); // Add t to the dependency array
 

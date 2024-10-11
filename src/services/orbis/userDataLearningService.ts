@@ -20,7 +20,8 @@ export const getPhraseStatus = async (songUuid: string, userDid: string): Promis
     try {
         const flashcardIds = await getFlashcardIdsForDeck(songUuid);
         const now = new Date();
-        now.setHours(0, 0, 0, 0);
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const epoch = new Date(0);
 
         const { rows: learningData } = await db
             .select()
@@ -33,43 +34,38 @@ export const getPhraseStatus = async (songUuid: string, userDid: string): Promis
             .context(ORBIS_CONTEXT_ID)
             .run();
 
-        console.log('Raw learning data:', learningData);
+        console.log('Raw learning data:', JSON.stringify(learningData, null, 2));
 
         let newCount = 0;
         let learningCount = 0;
         let dueCount = 0;
         let studiedToday = 0;
 
-        const seenFlashcards = new Set();
+        const seenFlashcards = new Map();
 
         learningData.forEach(data => {
-            if (!seenFlashcards.has(data.flashcard_id) && data.flashcard_id.startsWith(songUuid)) {
-                seenFlashcards.add(data.flashcard_id);
-                const lastReview = new Date(data.last_review);
-                const nextReview = new Date(data.next_review);
+            if (!seenFlashcards.has(data.flashcard_id) || data.reps > seenFlashcards.get(data.flashcard_id).reps) {
+                seenFlashcards.set(data.flashcard_id, data);
+            }
+        });
 
-                // console.log(`Processing flashcard ${data.flashcard_id}:`);
-                // console.log(`  Last review: ${lastReview}`);
-                // console.log(`  Next review: ${nextReview}`);
-                // console.log(`  Reps: ${data.reps}`);
+        seenFlashcards.forEach((data, flashcardId) => {
+            const lastReview = new Date(data.last_review);
 
-                if (lastReview.getTime() === 0) {  // 1970-01-01T00:00:00.000Z
-                    newCount++;
-                    console.log('  Status: New');
-                } else if (nextReview > now) {
-                    learningCount++;
-                    console.log('  Status: Learning');
-                } else {
-                    dueCount++;
-                    console.log('  Status: Due');
-                }
+            console.log(`Processing flashcard ${flashcardId}:`);
+            console.log(`  Last review: ${lastReview}`);
+            console.log(`  Reps: ${data.reps}`);
 
-                if (lastReview >= now) {
-                    studiedToday++;
-                    // console.log('  Studied today: Yes');
-                } else {
-                    // console.log('  Studied today: No');
-                }
+            if (lastReview >= today) {
+                studiedToday++;
+                learningCount++;
+                console.log('  Status: Learning (Studied today)');
+            } else if (lastReview.getTime() === epoch.getTime() || data.reps === 0) {
+                newCount++;
+                console.log('  Status: New');
+            } else {
+                dueCount++;
+                console.log('  Status: Due');
             }
         });
 
@@ -81,7 +77,8 @@ export const getPhraseStatus = async (songUuid: string, userDid: string): Promis
             learningCount,
             dueCount,
             studiedToday,
-            totalCards: flashcardIds.length
+            totalCards: flashcardIds.length,
+            processedCards: seenFlashcards.size
         });
 
         return {
@@ -397,7 +394,7 @@ const fetchCardsToStudy = async (songUuid: string, totalCards: number, maxNewCar
         .from(ORBIS_USER_LEARNING_DATA_MODEL_ID)
         .where({
             flashcard_id: { $in: allFlashcardIds },
-            controller: userDid // Add this line to filter by the current user
+            controller: userDid
         })
         .orderBy(['last_review', 'desc'])
         .context(ORBIS_CONTEXT_ID)
@@ -419,26 +416,19 @@ const fetchCardsToStudy = async (songUuid: string, totalCards: number, maxNewCar
     console.log('[userDataLearningService] Latest card data:', JSON.stringify(latestCardData, null, 2));
 
     const studiedTodayIds = new Set(Object.values(latestCardData)
-        .filter(card => {
-            const lastReviewDate = new Date(card.last_review);
-            const isStudiedToday = lastReviewDate >= today;
-            console.log(`[userDataLearningService] Card ${card.flashcard_id}: Last review: ${lastReviewDate.toISOString()}, Is studied today: ${isStudiedToday}`);
-            return isStudiedToday;
-        })
+        .filter(card => new Date(card.last_review) >= today)
         .map(card => card.flashcard_id));
 
     console.log(`[userDataLearningService] Cards studied today: ${studiedTodayIds.size}`);
-    console.log('[userDataLearningService] Cards studied today IDs:', Array.from(studiedTodayIds));
 
     let availableCards: UserLearningData[];
     if (isStudyAgain) {
         availableCards = Object.values(latestCardData).filter(card => studiedTodayIds.has(card.flashcard_id));
     } else {
-        // Include cards that haven't been studied today or have never been studied
         availableCards = allFlashcardIds.map(id => {
-            if (latestCardData[id] && !studiedTodayIds.has(id)) {
+            if (latestCardData[id]) {
                 return latestCardData[id];
-            } else if (!latestCardData[id]) {
+            } else {
                 return {
                     flashcard_id: id,
                     last_review: new Date(0).toISOString(),
@@ -452,19 +442,22 @@ const fetchCardsToStudy = async (songUuid: string, totalCards: number, maxNewCar
                     retrievability: 0
                 };
             }
-            return null;
-        }).filter((card): card is UserLearningData => card !== null);
+        });
     }
 
     console.log(`[userDataLearningService] Available cards for ${isStudyAgain ? 'study again' : 'regular study'}: ${availableCards.length}`);
 
     const newCards = availableCards.filter(card => new Date(card.last_review).getTime() === new Date(0).getTime());
     const dueCards = availableCards.filter(card => {
-        const nextReview = new Date(card.next_review || '1970-01-01T00:00:00.000Z');
-        return nextReview <= now && new Date(card.last_review).getTime() !== new Date(0).getTime();
+        const nextReview = new Date(card.next_review);
+        return nextReview <= now && new Date(card.last_review).getTime() !== new Date(0).getTime() && !studiedTodayIds.has(card.flashcard_id);
+    });
+    const learningCards = availableCards.filter(card => {
+        const lastReview = new Date(card.last_review);
+        return lastReview >= today && new Date(card.last_review).getTime() !== new Date(0).getTime();
     });
 
-    console.log(`[userDataLearningService] Available new cards: ${newCards.length}, Due cards: ${dueCards.length}`);
+    console.log(`[userDataLearningService] Available new cards: ${newCards.length}, Due cards: ${dueCards.length}, Learning cards: ${learningCards.length}`);
 
     const newCardsToStudy = isStudyAgain ? 0 : Math.min(newCards.length, maxNewCards);
 
@@ -472,13 +465,9 @@ const fetchCardsToStudy = async (songUuid: string, totalCards: number, maxNewCar
 
     const cardsToStudy = isStudyAgain
         ? availableCards
-        : [...dueCards, ...newCards.slice(0, newCardsToStudy)].slice(0, totalCards);
+        : [...dueCards, ...learningCards, ...newCards.slice(0, newCardsToStudy)].slice(0, totalCards);
 
     console.log(`[userDataLearningService] Final cards to study:`, cardsToStudy.map(card => card.flashcard_id));
-
-    if (cardsToStudy.length === 0) {
-        console.log('[userDataLearningService] No cards to study after filtering. Check if the filtering logic is too strict.');
-    }
 
     return cardsToStudy.map(card => card.flashcard_id);
 };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { quantum } from 'ldrs';
+import { quantum, dotStream } from 'ldrs';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Volume2, Music, Pause } from 'lucide-react';
 import { phraseService } from '../../services/orbis/phraseService';
 import { songService } from '../../services/orbis/songService';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
@@ -10,10 +10,10 @@ import { createUserSongService } from '../../services/orbis/userSongService';
 import { PhraseStatus, Phrase, DeckType, Song } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import FlashcardStatusDisplay from '../core/FlashcardStatusDisplay';
-import AudioButton from '../core/AudioButton'; // Import the new AudioButton component
 import { Button } from "../ui/button"; // Make sure you have this Button component
 
 quantum.register();
+dotStream.register();
 
 const DeckStudyPage: React.FC = () => {
   const { t } = useTranslation();
@@ -29,6 +29,51 @@ const DeckStudyPage: React.FC = () => {
   const { authenticateCeramic, user } = useAuth();
 
   const userSongService = useMemo(() => createUserSongService(authenticateCeramic), [authenticateCeramic]);
+
+  const [playingAudio, setPlayingAudio] = useState<HTMLAudioElement | null>(null);
+  const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
+
+  const handleAudioPlay = useCallback((cid: string) => {
+    if (loadingAudio === cid) return;
+
+    if (playingAudio) {
+      playingAudio.pause();
+      playingAudio.currentTime = 0;
+      setPlayingAudio(null);
+    }
+
+    setLoadingAudio(cid);
+    const audio = new Audio(`https://warp.dolpin.io/ipfs/${cid}`);
+    audio.oncanplaythrough = () => {
+      setLoadingAudio(null);
+      audio.play();
+      setPlayingAudio(audio);
+    };
+    audio.onended = () => {
+      setPlayingAudio(null);
+    };
+  }, [playingAudio, loadingAudio]);
+
+  const renderAudioControl = (cid: string, type: 'tts' | 'song') => {
+    const isPlaying = playingAudio && playingAudio.src.includes(cid);
+    const isLoading = loadingAudio === cid;
+    const Icon = type === 'tts' ? Volume2 : Music;
+
+    return (
+      <div 
+        className="flex-1 flex items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
+        onClick={() => handleAudioPlay(cid)}
+      >
+        {isLoading ? (
+          <l-dot-stream size="20" speed="2.5" color="#FFFFFF"></l-dot-stream>
+        ) : isPlaying ? (
+          <Pause className="w-6 h-6 text-neutral-300" />
+        ) : (
+          <Icon className="w-6 h-6 text-neutral-300" />
+        )}
+      </div>
+    );
+  };
 
   const fetchDeckData = useCallback(async () => {
     if (!geniusSlug) {
@@ -126,11 +171,6 @@ const DeckStudyPage: React.FC = () => {
     }
   }, [deck, user, userSongService, authenticateCeramic, userLearningDataService]);
 
-  const playAudio = useCallback((cid: string) => {
-    console.log(`Playing audio with CID: ${cid}`);
-    // The actual audio playing logic is now handled in the AudioButton component
-  }, []);
-
   const handleMatchClick = useCallback(() => {
     if (geniusSlug) {
       console.log('[DeckStudyPage] Navigating to match study with geniusSlug:', geniusSlug);
@@ -170,7 +210,7 @@ const DeckStudyPage: React.FC = () => {
       >
         <ArrowLeft className="w-6 h-6" />
       </button>
-      <div className="flex-grow p-4 overflow-auto">
+      <div className="flex-grow p-4 overflow-auto pb-20"> {/* Added pb-20 for bottom padding */}
         <div className="flex items-center mb-4">
           <img
             src={`https://warp.dolpin.io/ipfs/${deck.img_cid}`}
@@ -218,28 +258,23 @@ const DeckStudyPage: React.FC = () => {
           <h2 className="text-lg font-semibold mb-4">{t('deckStudy.phrases', { count: phrases.length })}</h2>
           <ul className="space-y-4">
             {phrases.map((phrase) => (
-              <li key={phrase.phrase_id} className="bg-neutral-800 p-4 rounded-lg">
-                {phrase.text.split('\\n').map((line, index) => (
-                  <React.Fragment key={index}>
-                    <p className="text-md font-medium mt-1">{line}</p>
-                    {phrase.text_cmn && (
-                      <p className="text-sm text-neutral-400 mb-1">
-                        {phrase.text_cmn.split('\\n')[index]}
-                      </p>
-                    )}
-                  </React.Fragment>
-                ))}
-                <div className="flex justify-between mt-4 gap-2">
-                  <AudioButton
-                    cid={phrase.tts_cid}
-                    label="Scarlett"
-                    onPlay={playAudio}
-                  />
-                  <AudioButton
-                    cid={phrase.audio_cid}
-                    label="Song"
-                    onPlay={playAudio}
-                  />
+              <li key={phrase.phrase_id} className="bg-neutral-800 rounded-lg overflow-hidden">
+                <div className="p-4">
+                  {phrase.text.split('\\n').map((line, index) => (
+                    <React.Fragment key={index}>
+                      <p className="text-md font-medium mt-1">{line}</p>
+                      {phrase.text_cmn && (
+                        <p className="text-sm text-neutral-400 mb-1">
+                          {phrase.text_cmn.split('\\n')[index]}
+                        </p>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+                <div className="flex h-14 bg-neutral-700">
+                  {renderAudioControl(phrase.tts_cid, 'tts')}
+                  <div className="w-px h-full bg-neutral-600"></div>
+                  {renderAudioControl(phrase.audio_cid, 'song')}
                 </div>
               </li>
             ))}

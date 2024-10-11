@@ -1,27 +1,36 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FlashcardProps } from '../../types';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { FlashcardProps, FlashcardRef } from '../../types';
 import { Volume2, Pause, Music } from 'lucide-react';
 import { dotStream } from 'ldrs';
+import ReactCardFlip from 'react-card-flip';
+import { useSpring, animated } from 'react-spring';
 
 dotStream.register();
 
-export const Flashcard: React.FC<FlashcardProps> = (props) => {
+export const Flashcard = forwardRef<FlashcardRef, FlashcardProps>((props, ref) => {
     const [ttsAudio, setTtsAudio] = useState<HTMLAudioElement | null>(null);
     const [songAudio, setSongAudio] = useState<HTMLAudioElement | null>(null);
     const [ttsLoading, setTtsLoading] = useState(false);
     const [songLoading, setSongLoading] = useState(false);
-    const prevIdRef = useRef<string | null>(null);
+
+    const [{ x }, api] = useSpring(() => ({ x: 0 }));
+
+    useImperativeHandle(ref, () => ({
+        moveCardLeft: () => {
+            api.start({ x: -500, immediate: false });
+        },
+        flip: () => {
+            props.onFlip();
+        },
+        reset: () => {
+            api.start({ x: 0, immediate: true });
+        }
+    }));
 
     useEffect(() => {
-        if (props.id !== prevIdRef.current) {
-            stopAllAudio();
-            prevIdRef.current = props.id;
-        }
-
-        return () => {
-            stopAllAudio();
-        };
-    }, [props.id]);
+        stopAllAudio();
+        api.start({ x: 0, immediate: true });
+    }, [props.id, api]);
 
     const stopAllAudio = () => {
         if (ttsAudio) {
@@ -78,7 +87,10 @@ export const Flashcard: React.FC<FlashcardProps> = (props) => {
         return (
             <div 
                 className="flex-1 flex items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
-                onClick={() => handleAudioPlay(type)}
+                onClick={(e) => {
+                    e.stopPropagation(); // Prevent event from bubbling up
+                    handleAudioPlay(type);
+                }}
             >
                 {isLoading ? (
                     <l-dot-stream size="20" speed="2.5" color="#FFFFFF"></l-dot-stream>
@@ -91,25 +103,41 @@ export const Flashcard: React.FC<FlashcardProps> = (props) => {
         );
     };
 
-    return (
-        <div className="flex flex-col h-full w-full max-w-md mx-auto">
-            <div className="flex-grow flex flex-col">
-                <div className="flex-grow flex flex-col items-center justify-center p-4">
-                    <div className="w-full h-[400px] bg-neutral-800 rounded-2xl shadow-lg overflow-hidden flex flex-col">
-                        <div className="flex-grow flex flex-col items-center justify-center p-6 overflow-y-auto">
-                            <div className="w-full flex flex-col items-center justify-center">
-                                {props.isFlipped ? renderText(props.text, props.text_cmn) : renderText(props.text, '')}
-                            </div>
-                        </div>
-                        {/* Audio controls - integrated into the card */}
-                        <div className="h-14 bg-neutral-700 flex items-center">
-                            {renderAudioControl('tts')}
-                            <div className="w-px h-8 bg-neutral-600"></div>
-                            {renderAudioControl('song')}
-                        </div>
-                    </div>
+    const cardContent = (isFront: boolean) => (
+        <div className="w-full h-[400px] bg-neutral-800 rounded-2xl shadow-lg overflow-hidden flex flex-col">
+            <div 
+                className="flex-grow flex flex-col items-center justify-center p-6 overflow-y-auto"
+                onClick={props.onFlip}
+            >
+                <div className="w-full flex flex-col items-center justify-center">
+                    {isFront ? renderText(props.text, '') : renderText(props.text, props.text_cmn)}
                 </div>
+            </div>
+            <div className="h-14 bg-neutral-700 flex items-center" onClick={(e) => e.stopPropagation()}>
+                {renderAudioControl('tts')}
+                <div className="w-px h-8 bg-neutral-600"></div>
+                {renderAudioControl('song')}
             </div>
         </div>
     );
-};
+
+    return (
+        <div className="w-full max-w-3xl mx-auto px-4">
+            <animated.div
+                style={{
+                    x,
+                    touchAction: 'none',
+                }}
+            >
+                <ReactCardFlip isFlipped={props.isFlipped} flipDirection="horizontal">
+                    <div key="front">
+                        {cardContent(true)}
+                    </div>
+                    <div key="back">
+                        {cardContent(false)}
+                    </div>
+                </ReactCardFlip>
+            </animated.div>
+        </div>
+    );
+});

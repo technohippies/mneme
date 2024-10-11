@@ -5,16 +5,22 @@ export interface FlashcardStatus {
 }
 
 export interface FlashcardProps {
-    id: string;  // Add this line
+    id: string;
     text: string;
     text_cmn: string;
     tts_cid?: string;
     audio_cid?: string;
     background_image_cid?: string;
-    isFlipped: boolean;
-    onFlip: () => void;  // Add this line
+    onFlip: () => void;
     onAgain: () => void;
     onGood: () => void;
+    isFlipped: boolean;
+}
+
+export interface FlashcardRef {
+    moveCardLeft: () => void;
+    flip: () => void;
+    reset: () => void;
 }
 
 export type DeckEntry = {

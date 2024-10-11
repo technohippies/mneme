@@ -8,7 +8,7 @@ interface StreakData {
 export const getStreakData = async (address: string = '0x1234...5678'): Promise<StreakData> => {
   console.log('getStreakData called with address:', address);
   try {
-    const url = `https://modern-telephone-deafening.functions.on-fleek.app/streak?address=${address}`;
+    const url = `https://tall-car-petite.functions.on-fleek.app/streak?address=${address}`;
     console.log('Fetching streak data from URL:', url);
     const response = await axios.get<StreakData>(url);
     console.log('Received response:', response.data);

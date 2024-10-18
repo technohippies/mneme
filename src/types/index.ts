@@ -84,10 +84,11 @@ export interface DeckType {
 
 export interface Song {
     stream_id: string;
-    controller: string;
+    controller?: string;
     uuid: string;
     language: string;
-    song_cid: string;
+    song_cid_1: string;
+    song_cid_2: string;
     genius_id: number;
     genius_slug: string;
     release_date: string;

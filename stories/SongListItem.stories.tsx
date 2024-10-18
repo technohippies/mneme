@@ -25,7 +25,8 @@ const sampleSong: Song = {
   controller: 'sample-controller',
   uuid: 'sample-uuid',
   language: 'en',
-  song_cid: 'sample-song-cid',
+  song_cid_1: 'sample-song-cid-1',
+  song_cid_2: 'sample-song-cid-2',
   genius_id: 12345,
   genius_slug: 'sample-song-lyrics',
   release_date: '2023-01-01',
@@ -39,7 +40,7 @@ const sampleSong: Song = {
   album_title_jpn: 'サンプルアルバム',
   album_title_kor: '샘플 앨범',
   artist_name_cmn: '示例艺术家',
-  artist_name_eng: 'Sample Artist',
+  artist_name_original: 'Sample Artist',
   artist_name_jpn: 'サンプルアーティスト',
   artist_name_kor: '샘플 아티스트',
   description_cmn: '这是一个示例描述',
@@ -72,7 +73,7 @@ export const LongSongTitle: Story = {
 
 export const LongArtistName: Story = {
   args: {
-    song: { ...sampleSong, artist_name_eng: 'This is a very long artist name that might cause layout issues' },
+    song: { ...sampleSong, artist_name_original: 'This is a very long artist name that might cause layout issues' },
   },
 };
 
@@ -88,7 +89,7 @@ export const NonEnglishTitles: Story = {
       ...sampleSong,
       song_title_eng: '你好，世界',
       song_title_cmn: '你好，世界',
-      artist_name_eng: '张三',
+      artist_name_original: '张三',
       artist_name_cmn: '张三',
     },
   },

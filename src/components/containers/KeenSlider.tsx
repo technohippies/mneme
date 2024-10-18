@@ -148,7 +148,11 @@ const KeenSlider: React.FC<KeenSliderProps> = ({ songs, phrases }) => {
               <div className="flex-grow">
                 <KaraokeControls
                   phrases={songPhrases}
-                  audioUrl={song.song_cid ? `https://ipfs.filebase.io/ipfs/${song.song_cid}` : ''}
+                  audioUrl={song.song_cid_1 
+                    ? `https://ipfs.filebase.io/ipfs/${song.song_cid_1}` 
+                    : song.song_cid_2 
+                      ? `https://warp.dolpin.io/ipfs/${song.song_cid_2}`
+                      : ''}
                   onRecordingComplete={handleRecordingComplete}
                   onPhraseComplete={(phraseId, performance) => {
                     console.log(`Phrase ${phraseId} completed with performance: ${performance}`);

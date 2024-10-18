@@ -7,23 +7,26 @@ import { songService } from '../../services/orbis/songService';
 import { DeckType, PhraseStatus, Song } from '../../types';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button } from '../ui/button';
 import { truncateTitle } from '@/lib/utils'; // Make sure this utility function is available
 import loadingImage from '/images/loading-image.png';
 import { motion } from 'framer-motion';
-import SongListItem from '../core/SongListItem';
+import { useMediaQuery } from 'react-responsive'; // Add this import
 
 const DecksListPage: React.FC = () => {
   const { t } = useTranslation();
   const [decks, setDecks] = useState<DeckType[]>([]);
-  const [newSongs, setNewSongs] = useState<Song[]>([]);
+  const [englishSongs, setEnglishSongs] = useState<Song[]>([]);
+  const [frenchSongs, setFrenchSongs] = useState<Song[]>([]);
+  const [spanishSongs, setSpanishSongs] = useState<Song[]>([]);
+  const [italianSongs, setItalianSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasFetched, setHasFetched] = useState(false);
   const authenticateCeramic = useAuthenticateCeramic();
-  const userSongService = useMemo(() => createUserSongService(() => authenticateCeramic()), [authenticateCeramic]);
+  const userSongService = useMemo(() => createUserSongService(authenticateCeramic), [authenticateCeramic]);
   const { user, isAuthenticating, login } = useAuth();
   const [deckStatuses, setDeckStatuses] = useState<{ [key: string]: PhraseStatus }>({});
-  const navigate = useNavigate();
+  const [allSongs, setAllSongs] = useState<{ [key: string]: Song[] }>({});
+  const [isLoadingSongs, setIsLoadingSongs] = useState(true);
 
   console.log('DecksListPage - Current user:', user);
   console.log('DecksListPage - Is authenticating:', isAuthenticating);
@@ -50,12 +53,6 @@ const DecksListPage: React.FC = () => {
           } as DeckType;
         }));
         setDecks(formattedDecks);
-
-        // Fetch new songs
-        const allSongs = await songService.getSongs();
-        const userSongIds = new Set(formattedDecks.map(deck => deck.id));
-        const newSongsFiltered = allSongs.filter(song => !userSongIds.has(song.uuid));
-        setNewSongs(newSongsFiltered);
       } catch (error) {
         console.error('Error fetching decks:', error);
       } finally {
@@ -76,7 +73,7 @@ const DecksListPage: React.FC = () => {
   }, [fetchDecks]);
 
   const SectionHeader = ({ title, showStats = true }: { title: string, showStats?: boolean }) => (
-    <div className="flex items-center mb-2 relative">
+    <div className="flex items-center mb-4 relative">
       <h1 className="text-neutral-200 text-xl font-bold">{title}</h1>
       {showStats && (
         <>
@@ -106,75 +103,204 @@ const DecksListPage: React.FC = () => {
     </div>
   ), []);
 
-  if (isLoading) {
+  const isDesktop = useMediaQuery({ minWidth: 1024 });
+
+  // Add this CSS class for styled scrollbars
+  const scrollbarStyle = `
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #2a2a2a;
+      border-radius: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #4a4a4a;
+      border-radius: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #5a5a5a;
+    }
+  `;
+
+  const SongGrid = ({ songs, title }: { songs: Song[], title: string }) => {
+    const navigate = useNavigate();
+
+    return (
+      <div className="mb-8">
+        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <div className={`flex overflow-x-auto pb-4 space-x-4 ${isDesktop ? 'custom-scrollbar' : ''}`}>
+          {songs.map((song) => (
+            <div 
+              key={song.uuid} 
+              className="flex-shrink-0 w-36 cursor-pointer"
+              onClick={() => navigate(`/deck/${song.genius_slug}`)}
+            >
+              <img
+                src={`https://warp.dolpin.io/ipfs/${song.song_art_image_cid}`}
+                alt={song.song_title}
+                className="w-36 h-36 object-cover rounded-lg mb-2"
+                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  e.currentTarget.src = "/images/placeholder.png";
+                }}
+              />
+              <p className="text-md font-medium truncate">{song.song_title}</p>
+              <p className="text-md text-neutral-400 truncate">{song.artist_name_original}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const fetchSongsByLanguage = useCallback(async () => {
+    console.log('fetchSongsByLanguage called');
+    if (!isAuthenticating && user?.did) {
+      console.log('Fetching songs by language...');
+      try {
+        console.log('Calling songService.getSongsByLanguage("eng")');
+        const englishSongs = await songService.getSongsByLanguage('eng');
+        console.log('Fetched English songs:', englishSongs);
+        setEnglishSongs(englishSongs);
+
+        console.log('Calling songService.getSongsByLanguage("fra")');
+        const frenchSongs = await songService.getSongsByLanguage('fra');
+        console.log('Fetched French songs:', frenchSongs);
+        setFrenchSongs(frenchSongs);
+
+        console.log('Calling songService.getSongsByLanguage("spa")');
+        const spanishSongs = await songService.getSongsByLanguage('spa');
+        console.log('Fetched Spanish songs:', spanishSongs);
+        setSpanishSongs(spanishSongs);
+
+        console.log('Calling songService.getSongsByLanguage("ita")');
+        const italianSongs = await songService.getSongsByLanguage('ita');
+        console.log('Fetched Italian songs:', italianSongs);
+        setItalianSongs(italianSongs);
+
+      } catch (error) {
+        console.error('Error fetching songs by language:', error);
+      } finally {
+        setHasFetched(true);
+      }
+    } else {
+      console.log('Skipping fetchSongsByLanguage:', { isAuthenticating, userDid: user?.did });
+    }
+  }, [isAuthenticating, user, songService]);
+
+  useEffect(() => {
+    console.log('songService:', songService);
+    if (songService && typeof songService.getSongsByLanguage === 'function' && !hasFetched) {
+      fetchSongsByLanguage();
+    } else if (hasFetched) {
+      console.log('Songs have already been fetched');
+    } else {
+      console.error('songService or getSongsByLanguage is not available');
+    }
+  }, [songService, fetchSongsByLanguage, hasFetched]);
+
+  useEffect(() => {
+    console.log('English songs state updated:', englishSongs);
+  }, [englishSongs]);
+
+  useEffect(() => {
+    console.log('French songs state updated:', frenchSongs);
+  }, [frenchSongs]);
+
+  useEffect(() => {
+    console.log('Spanish songs state updated:', spanishSongs);
+  }, [spanishSongs]);
+
+  useEffect(() => {
+    console.log('Italian songs state updated:', italianSongs);
+  }, [italianSongs]);
+
+  const fetchAllSongs = useCallback(async () => {
+    if (!isAuthenticating && user?.did && !hasFetched) {
+      console.log('Fetching all songs...');
+      setIsLoadingSongs(true);
+      try {
+        const languages = ['eng', 'fra', 'spa', 'ita'];
+        const songsByLanguage = await Promise.all(
+          languages.map(async (lang) => {
+            const songs = await songService.getSongsByLanguage(lang);
+            return { [lang]: songs };
+          })
+        );
+        const mergedSongs = Object.assign({}, ...songsByLanguage);
+        setAllSongs(mergedSongs);
+        setHasFetched(true);
+      } catch (error) {
+        console.error('Error fetching songs:', error);
+      } finally {
+        setIsLoadingSongs(false);
+      }
+    }
+  }, [isAuthenticating, user, hasFetched]);
+
+  useEffect(() => {
+    fetchAllSongs();
+  }, [fetchAllSongs]);
+
+  if (isLoading || isLoadingSongs) {
     return <LoadingScreen />;
   }
 
+  // Log the current state before rendering
+  console.log('Current state:', { englishSongs, frenchSongs, spanishSongs, italianSongs });
+
   return (
-    <div className="container mx-auto px-4 py-8 h-full overflow-y-auto">
-      {decks.length > 0 && (
-        <div className="mb-8">
-          <SectionHeader title={t('decksList.yourSongs')} />
-          {decks.map((deck) => (
-            <Link key={deck.id} to={`/deck/${deck.genius_slug}`}>
-              <div className="block mb-4 bg-neutral-800 hover:bg-neutral-700 rounded-md overflow-hidden shadow-sm">
-                <div className="flex items-center p-3 relative">
-                  <img
-                    src={`https://warp.dolpin.io/ipfs/${deck.img_cid}`}
-                    alt={deck.name}
-                    className="w-12 h-12 bg-neutral-600 rounded-lg overflow-hidden object-cover mr-3"
-                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                      e.currentTarget.src = "/images/placeholder.png";
-                    }}
-                  />
-                  <div className="flex-grow">
-                    <h2 className="text-lg font-semibold text-neutral-100 truncate">
-                      {truncateTitle(deck.name, 30)}
-                    </h2>
-                    <p className="text-sm text-neutral-300 truncate">
-                      {truncateTitle(deck.artist, 30)}
-                    </p>
-                  </div>
-                  <div className="absolute right-28 w-10 text-center text-lg font-medium">
-                    {deckStatuses[deck.id]?.new_count || 0}
-                  </div>
-                  <div className="absolute right-16 w-10 text-center text-lg font-medium">
-                    {deckStatuses[deck.id]?.learning_count || 0}
-                  </div>
-                  <div className="absolute right-4 w-10 text-center text-lg font-medium">
-                    {deckStatuses[deck.id]?.due_count || 0}
+    <>
+      {isDesktop && <style>{scrollbarStyle}</style>}
+      <div className={`container mx-auto px-4 py-8 h-full overflow-y-auto ${isDesktop ? 'custom-scrollbar' : ''}`}>
+        {decks.length > 0 && (
+          <div className="mb-8">
+            <SectionHeader title={t('decksList.yourSongs')} />
+            {decks.map((deck) => (
+              <Link key={deck.id} to={`/deck/${deck.genius_slug}`}>
+                <div className="block mb-4 bg-neutral-800 hover:bg-neutral-700 rounded-md overflow-hidden shadow-sm">
+                  <div className="flex items-center p-3 relative">
+                    <img
+                      src={`https://warp.dolpin.io/ipfs/${deck.img_cid}`}
+                      alt={deck.name}
+                      className="w-12 h-12 bg-neutral-600 rounded-lg overflow-hidden object-cover mr-3"
+                      onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                        e.currentTarget.src = "/images/placeholder.png";
+                      }}
+                    />
+                    <div className="flex-grow">
+                      <h2 className="text-lg font-semibold text-neutral-100 truncate">
+                        {truncateTitle(deck.name, 30)}
+                      </h2>
+                      <p className="text-sm text-neutral-300 truncate">
+                        {truncateTitle(deck.artist, 30)}
+                      </p>
+                    </div>
+                    <div className="absolute right-28 w-10 text-center text-lg font-medium">
+                      {deckStatuses[deck.id]?.new_count || 0}
+                    </div>
+                    <div className="absolute right-16 w-10 text-center text-lg font-medium">
+                      {deckStatuses[deck.id]?.learning_count || 0}
+                    </div>
+                    <div className="absolute right-4 w-10 text-center text-lg font-medium">
+                      {deckStatuses[deck.id]?.due_count || 0}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      <div className="mb-8">
-        <SectionHeader title={t('decksList.newSongs')} showStats={false} />
-        {newSongs.length > 0 ? (
-          newSongs.map((song) => (
-            <SongListItem key={song.uuid} song={song} />
-          ))
-        ) : (
-          <p className="text-neutral-300">{t('songList.noSongsAvailable')}</p>
+              </Link>
+            ))}
+          </div>
         )}
-      </div>
 
-      {decks.length === 0 && (
-        <div className="flex-grow flex flex-col items-center justify-center">
-          <Button
-            variant="blue"
-            size="lg"
-            className="w-full max-w-md"
-            onClick={() => navigate('/songs')}
-          >
-            {t('decksList.browse')}
-          </Button>
+        <div className="space-y-8">
+          <SongGrid songs={allSongs['eng'] || []} title={t('decksList.learnEnglish')} />
+          <SongGrid songs={allSongs['fra'] || []} title={t('decksList.learnFrench')} />
+          <SongGrid songs={allSongs['spa'] || []} title={t('decksList.learnSpanish')} />
+          <SongGrid songs={allSongs['ita'] || []} title={t('decksList.learnItalian')} />
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
 

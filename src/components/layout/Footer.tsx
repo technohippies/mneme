@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Music, LayoutGrid, User } from 'lucide-react';
+import { Music, Search, User } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 
@@ -37,7 +37,7 @@ const Footer: React.FC<FooterProps> = ({ className, ...props }) => {
       {...props}
     >
       {renderIcon('/', Music)}
-      {renderIcon('/decks', LayoutGrid)}
+      {renderIcon('/search', Search)}
       {renderIcon('/profile', User)}
     </div>
   );

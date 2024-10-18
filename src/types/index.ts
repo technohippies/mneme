@@ -124,7 +124,12 @@ export interface Song {
     plugins_data?: any;
     indexed_at?: string;
     audio_cid: string; // Add this line
-    translatedTitles?: { [key: string]: string };
+    translatedTitles?: { [key: string]: string | undefined }; // Update this line
+    song_title: string; // This will be the title in the song's original language
+    [key: string]: string | number | boolean | undefined | object; // Add this line
+    song_title_fra?: string;
+    song_title_spa?: string;
+    song_title_ita?: string;
 }
 
 export interface Phrase {

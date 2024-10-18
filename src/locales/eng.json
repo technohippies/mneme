@@ -39,6 +39,7 @@
   
   "settings": {
     "title": "Settings",
+    "learningLanguage": "I'm learning:",
     "learningEnglish": "I'm learning English",
     "otherLanguagesSoon": "Support for other target languages coming soon!",
     "openSource": "The project is open source so anyone can contribute, add, and fix code and translations.",
@@ -111,7 +112,11 @@
     "new": "New",
     "learn": "Learn",
     "due": "Due",
-    "newSongs": "New Songs"
+    "newSongs": "New Songs",
+    "learnEnglish": "Learn English",
+    "learnFrench": "Learn French",
+    "learnSpanish": "Learn Spanish",
+    "learnItalian": "Learn Italian"
   },
   
   "songList": {

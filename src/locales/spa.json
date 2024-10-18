@@ -107,7 +107,11 @@
     "yourSongs": "Tus Canciones",
     "noSongsAdded": "No has agregado ninguna canción para aprender.",
     "browse": "Explorar",
-    "newSongs": "Canciones Nuevas"
+    "newSongs": "Canciones Nuevas",
+    "learnEnglish": "Aprender Inglés",
+    "learnFrench": "Aprender Francés",
+    "learnSpanish": "Aprender Español",
+    "learnItalian": "Aprender Italiano"
   },
   
   "songList": {

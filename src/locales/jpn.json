@@ -25,11 +25,12 @@
     "premiumDomains": "プレミアムドメイン",
     "currentDomain": "現在のドメイン：",
     "buy": "購入",
-    "searchDomains": "ドメインを検索"
+    "searchDomains": "ドメ��ンを検索"
   },
   
   "settings": {
     "title": "設定",
+    "learningLanguage": "学習中の言語：",
     "learningEnglish": "英語を学んでいます",
     "otherLanguagesSoon": "他の目標言語のサポートは近日公開予定です！",
     "openSource": "このプロジェクトはオープンソースなので、誰でもコードや翻訳の貢献、追加、修正ができます。",
@@ -99,7 +100,11 @@
     "yourSongs": "あなたの曲",
     "noSongsAdded": "学習する曲がまだ追加されていません。",
     "browse": "ブラウズ",
-    "newSongs": "新しい曲"
+    "newSongs": "新しい曲",
+    "learnEnglish": "英語を学ぶ",
+    "learnFrench": "フランス語を学ぶ",
+    "learnSpanish": "スペイン語を学ぶ",
+    "learnItalian": "イタリア語を学ぶ"
   },
   
   "songList": {

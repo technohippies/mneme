@@ -30,6 +30,7 @@
   
   "settings": {
     "title": "设置",
+    "learningLanguage": "我正在学习：",
     "learningEnglish": "我正在学习英语",
     "otherLanguagesSoon": "即将支持其他目标语言。",
     "openSource": "这是一个开源项目，任何人都可以贡献和修复翻译。",
@@ -100,7 +101,11 @@
     "yourSongs": "您的歌曲",
     "noSongsAdded": "您还没有添加任何歌曲来学习。",
     "browse": "浏览",
-    "newSongs": "新歌曲"
+    "newSongs": "新歌曲",
+    "learnEnglish": "学习英语",
+    "learnFrench": "学习法语",
+    "learnSpanish": "学习西班牙语",
+    "learnItalian": "学习意大利语"
   },
   
   "songList": {

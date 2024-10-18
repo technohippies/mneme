@@ -11,17 +11,16 @@ import StudyCompletionPage from './components/pages/StudyCompletionPage';
 import SongListPage from './components/pages/SongListPage';
 import StorePage from './components/pages/StorePage';
 import { Navigate } from 'react-router-dom';
-import KeenSlider from './components/containers/KeenSlider';
 import KaraokeStudyPage from './components/pages/KaraokeStudyPage';
+import SearchPage from './components/pages/SearchPage';
 
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<KeenSlider songs={[]} phrases={[]} />} />
+      <Route path="/" element={<DecksListPage />} />
       <Route path="/streak" element={<StreakPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/domain" element={<DomainPage />} />
-      <Route path="/decks" element={<DecksListPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/profile/edit" element={<EditProfilePage />} />
       <Route path="/store" element={<StorePage />} />
@@ -31,6 +30,7 @@ export function AppRoutes() {
       <Route path="/songs" element={<SongListPage />} />
       <Route path="/u/:identifier" element={<ProfilePage />} />
       <Route path="/deck/:geniusSlug/karaoke" element={<KaraokeStudyPage />} />
+      <Route path="/search" element={<SearchPage />} />
       
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

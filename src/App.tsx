@@ -19,34 +19,15 @@ import DecksListPage from './components/pages/DecksListPage';
 import DeckStudyPage from './components/pages/DeckStudyPage';
 import FlashcardsPage from './components/pages/FlashcardsPage';
 import StudyCompletionPage from './components/pages/StudyCompletionPage';
-import KeenSlider from './components/containers/KeenSlider';
 import { EditProfilePage } from './components/pages/EditProfilePage';  // Add this import
 import StorePage from './components/pages/StorePage';  // Add this import
 import MatchStudyPage from './components/pages/MatchStudyPage';  // Add this import
 import KaraokeStudyPage from './components/pages/KaraokeStudyPage';  // Add this import
+import SearchPage from './components/pages/SearchPage'; // Add this import
 
 const AppContent: React.FC = () => {
   const { i18n } = useTranslation();
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [phrases, setPhrases] = useState<Phrase[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const fetchedSongs = await songService.getSongs();
-      console.log('App: Fetched songs', fetchedSongs);
-      setSongs(fetchedSongs);
-
-      const allPhrases = await Promise.all(
-        fetchedSongs.map(song => phraseService.getPhrases(song.uuid))
-      );
-      setPhrases(allPhrases.flat() as Phrase[]);
-      setIsLoading(false);
-    };
-
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const userLanguage = navigator.language.split('-')[0];
@@ -88,26 +69,12 @@ const AppContent: React.FC = () => {
       <Routes>
         <Route path="/" element={
           <LayoutWrapper>
-            {isLoading ? (
-              <LoadingScreen />
-            ) : (
-              <div className="h-full">
-                <KeenSlider 
-                  songs={songs} 
-                  phrases={phrases} 
-                />
-              </div>
-            )}
+            <DecksListPage />
           </LayoutWrapper>
         } />
         <Route path="/streak" element={<StreakPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/domain" element={<DomainPage />} />
-        <Route path="/decks" element={
-          <LayoutWrapper>
-            <DecksListPage />
-          </LayoutWrapper>
-        } />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/edit" element={<EditProfilePage />} />
         <Route path="/store" element={<StorePage />} />
@@ -117,6 +84,7 @@ const AppContent: React.FC = () => {
         <Route path="/study-completion/:geniusSlug" element={<StudyCompletionPage />} />
         <Route path="/deck/:geniusSlug/match" element={<MatchStudyPage />} />
         <Route path="/deck/:geniusSlug/karaoke" element={<KaraokeStudyPage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthWrapper>

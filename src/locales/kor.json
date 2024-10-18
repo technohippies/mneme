@@ -30,6 +30,7 @@
   
   "settings": {
     "title": "설정",
+    "learningLanguage": "학습 중인 언어:",
     "learningEnglish": "영어를 배우고 있습니다",
     "otherLanguagesSoon": "다른 목표 언어에 대한 지원이 곧 제공됩니다!",
     "openSource": "이 프로젝트는 오픈 소스이므로 누구나 코드와 번역을 기여, 추가 및 수정할 수 있습니다.",
@@ -99,7 +100,11 @@
     "yourSongs": "내 노래",
     "noSongsAdded": "학습할 노래를 아직 추가하지 않았습니다.",
     "browse": "둘러보기",
-    "newSongs": "새로운 노래"
+    "newSongs": "새로운 노래",
+    "learnEnglish": "영어 배우기",
+    "learnFrench": "프랑스어 배우기",
+    "learnSpanish": "스페인어 배우기",
+    "learnItalian": "이탈리아어 배우기"
   },
   
   "songList": {

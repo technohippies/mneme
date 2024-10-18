@@ -97,7 +97,6 @@ export const songService = {
   },
 
   async getSongByGeniusSlug(genius_slug: string): Promise<Song | null> {
-    // console.log('songService: getSongByGeniusSlug called with genius_slug', genius_slug);
     try {
       const { rows } = await db
         .select()
@@ -105,22 +104,48 @@ export const songService = {
         .where({ genius_slug: genius_slug })
         .run();
 
-      // console.log('songService: getSongByGeniusSlug raw result', rows);
       const song = rows.length > 0 && isValidSong(rows[0]) ? rows[0] as Song : null;
       
-      // Add this line to include all translated titles
       if (song) {
         song.translatedTitles = Object.fromEntries(
-          Object.entries(song).filter(([key, value]) => 
-            key.startsWith('song_title_') && key !== 'song_title_eng' && value
-          )
+          Object.entries(song)
+            .filter(([key, value]) => 
+              key.startsWith('song_title_') && key !== 'song_title_eng' && typeof value === 'string'
+            )
+            .map(([key, value]) => [key, value as string])
         );
       }
       
-      // console.log('songService: getSongByGeniusSlug processed result', song);
       return song;
     } catch (error) {
       console.error('songService: getSongByGeniusSlug error', error);
+      throw error;
+    }
+  },
+
+  async getSongsByLanguage(language: string): Promise<Song[]> {
+    console.log(`Fetching songs for language: ${language}`);
+    try {
+      const result = await db
+        .select()
+        .from(ORBIS_SONG_MODEL_ID)
+        .where({ language: language })
+        .limit(15)
+        .run();
+      
+      const { rows } = result;
+      const validSongs = rows.filter(isValidSong).map(song => {
+        const titleKey = `song_title_${language}` as keyof Song;
+        return {
+          ...song,
+          song_title: song[titleKey] as string || song.song_title_eng
+        };
+      });
+      console.log(`Valid songs for ${language}:`, validSongs.length);
+      
+      return validSongs as Song[];
+    } catch (error) {
+      console.error(`songService: getSongsByLanguage error for ${language}:`, error);
       throw error;
     }
   },

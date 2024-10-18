@@ -35,9 +35,9 @@ const Header: React.FC<HeaderProps> = ({ settingsLink, userAddress }) => {
   const getLocalizedLanguageText = () => {
     const currentLang = i18n.language.split('-')[0] as SupportedLocale;
     
-    // If the current language is English, just return "English"
+    // If the current language is English, return "English for English"
     if (currentLang === 'eng') {
-      return t('languageForEnglish');
+      return t('englishForEnglish', 'English for English');
     }
     
     const nativeName = languageNames[currentLang]?.native || currentLang;

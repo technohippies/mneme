@@ -3,7 +3,6 @@ import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
 import { Song, Phrase } from '../../types/index';
 import { KaraokeControls } from '../composite/KaraokeControls';
-import { quantum } from 'ldrs'
 import { createUserSongService } from '../../services/orbis/userSongService';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { useAuthenticateCeramic } from '../../services/orbis/authService';
@@ -11,8 +10,7 @@ import { getCurrentUserDID } from '../../services/orbis/config';
 import { ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 import loadingImage from '/images/loading-image.png';
-
-quantum.register();
+import { useTranslation } from 'react-i18next';
 
 interface KeenSliderProps {
   songs: Song[];
@@ -20,6 +18,7 @@ interface KeenSliderProps {
 }
 
 const KeenSlider: React.FC<KeenSliderProps> = ({ songs, phrases }) => {
+  const { i18n } = useTranslation();
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     vertical: true,
     slides: { perView: 1, spacing: 0 },
@@ -40,6 +39,12 @@ const KeenSlider: React.FC<KeenSliderProps> = ({ songs, phrases }) => {
   const handleExternalLink = useCallback((invidiousVideoId: string) => {
     window.open(`https://inv.nadeko.net/watch?v=${invidiousVideoId}`, '_blank');
   }, []);
+
+  const getSongTitle = useCallback((song: Song) => {
+    const languageCode = i18n.language.split('-')[0];
+    const titleKey = `song_title_${languageCode}` as keyof Song;
+    return (song[titleKey] as string) || song.song_title_eng || 'Unknown Title';
+  }, [i18n.language]);
 
   useEffect(() => {
     console.log('KeenSlider: songs changed', songs);
@@ -136,7 +141,7 @@ const KeenSlider: React.FC<KeenSliderProps> = ({ songs, phrases }) => {
                   className="absolute top-0 right-0 z-50 flex items-center space-x-2 text-xs text-gray-300 hover:text-blue-400 transition-colors p-4"
                   aria-label="Watch on Invidious"
                 >
-                  <span>{`${song.song_title_eng} - ${song.artist_name_eng}`}</span>
+                  <span>{`${getSongTitle(song)} - ${song.artist_name_original || 'Unknown Artist'}`}</span>
                   <ExternalLink size={16} />
                 </button>
               )}
@@ -151,6 +156,7 @@ const KeenSlider: React.FC<KeenSliderProps> = ({ songs, phrases }) => {
                   onAddSong={() => handleAddSong(songUuid)}
                   isInDeck={songsInDeck.has(songUuid)}
                   scoreError={scoreError}
+                  currentSong={song}
                 />
               </div>
             </div>

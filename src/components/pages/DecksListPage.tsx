@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { quantum } from 'ldrs';
 import { useTranslation } from 'react-i18next';
 import { createUserSongService } from '../../services/orbis/userSongService';
 import { useAuthenticateCeramic } from '../../services/orbis/authService';
@@ -12,9 +11,6 @@ import { Button } from '../ui/button';
 import { truncateTitle } from '@/lib/utils'; // Make sure this utility function is available
 import loadingImage from '/images/loading-image.png';
 import { motion } from 'framer-motion';
-
-// Register the quantum loader
-quantum.register();
 
 const DecksListPage: React.FC = () => {
   const { t } = useTranslation();

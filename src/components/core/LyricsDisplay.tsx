@@ -54,8 +54,11 @@ export const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
 
   const getTranslatedText = (lyric: Lyric) => {
     const currentLanguage = i18n.language;
-    console.log('Current language:', currentLanguage);
-    console.log('Lyric object:', lyric);
+    
+    // If the language is English, return null to hide the translation
+    if (currentLanguage === 'en') {
+      return null;
+    }
     
     let translatedText = lyric.translatedText;
     if (currentLanguage === 'cmn' && lyric.text_cmn) {
@@ -66,8 +69,7 @@ export const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
       translatedText = lyric.text_kor;
     }
     
-    console.log('Selected translated text:', translatedText);
-    return translatedText || lyric.englishText; // Fallback to English if no translation
+    return translatedText || null; // Return null if no translation is available
   };
 
   return (
@@ -78,9 +80,11 @@ export const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
             <div className="text-2xl font-bold mb-2">
               {renderText(lyric.englishText, lyric.words, false)}
             </div>
-            <div className="text-lg text-gray-400">
-              {renderText(getTranslatedText(lyric), [], true)}
-            </div>
+            {getTranslatedText(lyric) && (
+              <div className="text-lg text-gray-400">
+                {renderText(getTranslatedText(lyric)!, [], true)}
+              </div>
+            )}
           </div>
         ))}
       </div>

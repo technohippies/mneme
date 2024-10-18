@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { quantum } from 'ldrs';
 import CloseHeader from '../layout/CloseHeader';
 import { phraseService } from '../../services/orbis/phraseService';
 import { songService } from '../../services/orbis/songService';
 import { Phrase } from '../../types';
 import { Button } from "../ui/button";
-
-quantum.register();
+import { motion } from 'framer-motion';
+import loadingImage from '/images/loading-image.png';
 
 interface MatchPhrase extends Phrase {
   isMatched: boolean;
@@ -162,7 +161,19 @@ const MatchStudyPage: React.FC = () => {
   if (isLoading || isLoadingNewGame) {
     return (
       <div className="h-screen flex items-center justify-center bg-neutral-900">
-        <l-quantum size="45" speed="1.75" color="white"></l-quantum>
+        <motion.img 
+          src={loadingImage} 
+          alt="Loading" 
+          className="w-48 h-48 object-contain"
+          animate={{
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
       </div>
     );
   }

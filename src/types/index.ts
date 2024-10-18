@@ -101,7 +101,7 @@ export interface Song {
     album_title_jpn: string;
     album_title_kor: string;
     artist_name_cmn: string;
-    artist_name_eng: string;
+    artist_name_original: string;
     artist_name_jpn: string;
     artist_name_kor: string;
     description_cmn: string;

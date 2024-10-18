@@ -13,15 +13,12 @@ import { userLearningDataService } from "../../services/orbis/userDataLearningSe
 import { calculateFSRS, initializeCard } from "../../utils/fsrsAlgorithm";
 import { getCurrentUserDID } from "../../services/orbis/config";
 import { FlashcardType, UserLearningData, PhraseStatus, FlashcardRef } from "../../types";
-import { quantum } from "ldrs";
 import { useAuthenticateCeramic } from "../../services/orbis/authService";
 import { createUserSongService } from "../../services/orbis/userSongService";
 import { songService } from "../../services/orbis/songService";
 import { Button } from "../ui/button";
 import { motion } from 'framer-motion';
 import loadingImage from '/images/loading-image.png';
-
-quantum.register();
 
 const FlashcardsPage: React.FC = () => {
   const { geniusSlug } = useParams<{ geniusSlug: string }>();

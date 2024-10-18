@@ -1,6 +1,6 @@
 import { Button } from '../ui/button';
 import { Mic } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface MicrophonePermissionButtonProps {
@@ -11,7 +11,14 @@ export const MicrophonePermissionButton = ({
   onPermissionGranted
 }: MicrophonePermissionButtonProps) => {
   const [isRequesting, setIsRequesting] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  // Ensure the correct language code is being used
+  useEffect(() => {
+    if (i18n.language === 'en') {
+      i18n.changeLanguage('eng');
+    }
+  }, [i18n.language]);
 
   const requestPermission = async () => {
     setIsRequesting(true);
@@ -30,7 +37,7 @@ export const MicrophonePermissionButton = ({
       onClick={requestPermission}
       disabled={isRequesting}
       className="w-full"
-      variant="blue"  // Changed to use the "blue" variant
+      variant="blue"
     >
       <Mic className="mr-2 h-4 w-4" />
       <span>

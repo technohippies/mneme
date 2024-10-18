@@ -7,8 +7,9 @@ import { useAuthenticateCeramic } from '../../services/orbis/authService';
 import { getCurrentUserDID } from '../../services/orbis/config';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { DecodedMessage } from '@xmtp/xmtp-js';
+import { Song } from '../../types/index';
 
-export const KaraokeControls: React.FC<Omit<BasicKaraokeControlsProps, 'currentPhraseIndex' | 'setCurrentPhraseIndex' | 'lastReceivedScore' | 'showScore' | 'setShowScore'>> = (props) => {
+export const KaraokeControls: React.FC<Omit<BasicKaraokeControlsProps, 'currentPhraseIndex' | 'setCurrentPhraseIndex' | 'lastReceivedScore' | 'showScore' | 'setShowScore' | 'currentSong'> & { currentSong: Song }> = (props) => {
   const { data: walletClient } = useWalletClient();
   const authenticateCeramic = useAuthenticateCeramic();
   const userSongService = React.useMemo(() => createUserSongService(authenticateCeramic), [authenticateCeramic]);
@@ -124,6 +125,7 @@ export const KaraokeControls: React.FC<Omit<BasicKaraokeControlsProps, 'currentP
       showScore={showScore}
       setShowScore={setShowScore}
       scoreError={scoreError}
+      currentSong={props.currentSong}
     />
   );
 };

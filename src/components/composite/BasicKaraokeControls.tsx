@@ -6,7 +6,7 @@ import { ScoreDisplay } from '../core/ScoreDisplay';
 import { Button } from '../ui/button';
 import { waveform, orbit, trefoil } from 'ldrs';
 import { useAudioTime } from '../../hooks/useAudioTime';
-import { Phrase, Lyric } from '../../types/index';
+import { Phrase, Lyric, Song } from '../../types/index';
 import { PlusCircle, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -28,6 +28,7 @@ export interface BasicKaraokeControlsProps {
   scoreError: string | null;
   showScore: boolean; // Add this line
   setShowScore: React.Dispatch<React.SetStateAction<boolean>>; // Add this line
+  currentSong: Song; // Add this line
 }
 
 export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
@@ -43,8 +44,9 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
   scoreError,
   showScore,
   setShowScore,
+  currentSong, // Add this line
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [micPermissionGranted, setMicPermissionGranted] = React.useState(false);
   const [isRecording, setIsRecording] = React.useState(false);
   const [score, setScore] = React.useState<number | undefined>(undefined);
@@ -55,7 +57,6 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
   const [hasPracticed, setHasPracticed] = React.useState(false);
   const { currentTime, isPlaying, togglePlayPause, setCurrentTime, pauseAudio } = useAudioTime(audioUrl);
   const audioRef = useRef<MediaRecorder | null>(null);
-  const { i18n } = useTranslation();
   const latestScoreRef = React.useRef<number | undefined>(undefined);
   const latestPracticeScoreRef = React.useRef<number | undefined>(undefined);
 
@@ -63,17 +64,20 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
     // console.log('BasicKaraokeControls - Current language:', i18n.language);
   }, [i18n.language]);
 
-  const getTranslatedText = (phrase: Phrase): string => {
+  const getTranslatedText = (phrase: Phrase): string | null => {
     const currentLanguage = i18n.language;
+    if (currentLanguage === 'en') {
+      return null;
+    }
     switch (currentLanguage) {
       case 'cmn':
-        return phrase.text_cmn || phrase.text;
+        return phrase.text_cmn || null;
       case 'jpn':
-        return phrase.text_jpn || phrase.text;
+        return phrase.text_jpn || null;
       case 'kor':
-        return phrase.text_kor || phrase.text;
+        return phrase.text_kor || null;
       default:
-        return phrase.text;
+        return null;
     }
   };
 
@@ -222,7 +226,7 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
     startTime: parseFloat(currentPhrase.start_time),
     endTime: parseFloat(currentPhrase.end_time),
     englishText: currentPhrase.text ? currentPhrase.text.replace(/\\n/g, '\n') : '',
-    translatedText: getTranslatedText(currentPhrase),
+    translatedText: getTranslatedText(currentPhrase) || '',
     text_cmn: currentPhrase.text_cmn,
     text_jpn: currentPhrase.text_jpn,
     text_kor: currentPhrase.text_kor,
@@ -290,15 +294,23 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
 
   return (
     <div className="karaoke-controls flex flex-col h-full w-full bg-neutral-900 text-white relative">
-      {currentPhrase && currentPhrase.background_image_cid && (
+      {currentPhrase && currentPhrase.background_image_cid ? (
         <div className="absolute inset-0 w-full h-full">
           <img 
-            src={`https://ipfs.filebase.io/ipfs/${currentPhrase.background_image_cid}`}
+            src={`https://warp.dolpin.io/ipfs/${currentPhrase.background_image_cid}`}
             alt="Phrase Background" 
             className="w-full h-full object-cover opacity-30"
           />
         </div>
-      )}
+      ) : currentSong.header_image_cid ? (
+        <div className="absolute inset-0 w-full h-full">
+          <img 
+            src={`https://warp.dolpin.io/ipfs/${currentSong.header_image_cid}`}
+            alt="Song Background" 
+            className="w-full h-full object-cover opacity-30"
+          />
+        </div>
+      ) : null}
       <div className="flex-grow flex flex-col justify-center items-center overflow-y-auto px-4 relative z-10">
         {lyricsArray.length > 0 ? (
           <LyricsDisplay

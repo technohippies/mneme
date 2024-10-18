@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { quantum, dotStream } from 'ldrs';
+import { dotStream } from 'ldrs';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Volume2, Music, Pause } from 'lucide-react';
 import { phraseService } from '../../services/orbis/phraseService';
@@ -14,7 +14,6 @@ import { Button } from "../ui/button";
 import { motion } from 'framer-motion';
 import loadingImage from '/images/loading-image.png';
 
-quantum.register();
 dotStream.register();
 
 const DeckStudyPage: React.FC = () => {

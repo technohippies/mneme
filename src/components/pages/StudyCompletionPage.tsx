@@ -5,12 +5,9 @@ import { phraseService } from "../../services/orbis/phraseService";
 import { userLearningDataService } from "../../services/orbis/userDataLearningService";
 import { getCurrentUserDID } from "../../services/orbis/config";
 import { useAuthenticateCeramic } from "../../services/orbis/authService";
-import { quantum } from "ldrs";
 import { useTranslation } from "react-i18next";
 import { motion } from 'framer-motion';
 import loadingImage from '/images/loading-image.png';
-
-quantum.register();
 
 const StudyCompletionPage: React.FC = () => {
   const { geniusSlug } = useParams<{ geniusSlug: string }>();

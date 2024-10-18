@@ -80,6 +80,7 @@ export interface DeckType {
     target_language_2?: string;
     genius_slug: string;
     artist: string;
+    translatedTitles?: { [key: string]: string }; // Add this line
 }
 
 export interface Song {
@@ -122,6 +123,8 @@ export interface Song {
     _metadata_context?: string;
     plugins_data?: any;
     indexed_at?: string;
+    audio_cid: string; // Add this line
+    translatedTitles?: { [key: string]: string };
 }
 
 export interface Phrase {

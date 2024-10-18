@@ -26,18 +26,18 @@ const FlashcardStatusDisplay: React.FC<FlashcardStatusDisplayProps> = ({ status,
   };
 
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <div className="bg-neutral-800 p-4 rounded-lg">
-        <h2 className="text-neutral-300 text-md font-semibold mb-2">New</h2>
-        <p className="text-neutral-200 text-2xl font-bold">{renderValue(status?.new_count)}</p>
+    <div className="w-full grid grid-cols-3 gap-px">
+      <div className="bg-gradient-to-b from-neutral-800/60 to-neutral-800/90 p-4 text-center">
+        <h2 className="text-neutral-300 text-sm font-semibold mb-1">New</h2>
+        <p className="text-neutral-100 text-2xl font-bold">{renderValue(status?.new_count)}</p>
       </div>
-      <div className="bg-neutral-800 p-4 rounded-lg">
-        <h2 className="text-neutral-300 text-md font-semibold mb-2">Learning</h2>
-        <p className="text-neutral-200 text-2xl font-bold">{renderValue(status?.learning_count)}</p>
+      <div className="bg-gradient-to-b from-neutral-800/60 to-neutral-800/90 p-4 text-center">
+        <h2 className="text-neutral-300 text-sm font-semibold mb-1">Learning</h2>
+        <p className="text-neutral-100 text-2xl font-bold">{renderValue(status?.learning_count)}</p>
       </div>
-      <div className="bg-neutral-800 p-4 rounded-lg">
-        <h2 className="text-neutral-300 text-md font-semibold mb-2">Due</h2>
-        <p className="text-neutral-200 text-2xl font-bold">{renderValue(status?.due_count)}</p>
+      <div className="bg-gradient-to-b from-neutral-800/60 to-neutral-800/90 p-4 text-center">
+        <h2 className="text-neutral-300 text-sm font-semibold mb-1">Due</h2>
+        <p className="text-neutral-100 text-2xl font-bold">{renderValue(status?.due_count)}</p>
       </div>
     </div>
   );

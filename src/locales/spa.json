@@ -84,31 +84,30 @@
     "unavailable": "Puntuación No Disponible"
   },
   
-  "deckStudy": {
-    "deckNotFound": "Mazo no encontrado",
-    "phrases": "Frases ({{count}})",
-    "addDeck": "Agregar Mazo",
+  "songStudy": {
+    "songNotFound": "Canción no encontrada",
+    "lines": "Líneas ({{count}})",
+    "addSong": "Agregar Canción",
     "startStudying": "Comenzar a Estudiar",
     "continueStudying": "Continuar Estudiando",
     "studyAgain": "Estudiar de Nuevo",
     "newCards": "Nuevas",
     "learningCards": "Aprendiendo",
     "dueCards": "Pendientes",
-    "deckAdded": "Mazo agregado",
-    "errorAddingDeck": "Error al agregar el mazo. Por favor, intenta de nuevo.",
+    "songAdded": "Canción agregada",
+    "errorAddingSong": "Error al agregar la canción. Por favor, intenta de nuevo.",
     "matchPhrases": "Jugar Emparejamiento",
     "studyFlashcards": "Estudiar Tarjetas",
     "continueFlashcards": "Continuar Tarjetas",
-    "studyFlashcardsAgain": "Estudiar Tarjetas de Nuevo"
+    "studyFlashcardsAgain": "Estudiar Tarjetas de Nuevo",
+    "playKaraoke": "Jugar Karaoke"
   },
   
   "decksList": {
     "yourSongs": "Tus Canciones",
     "noSongsAdded": "No has agregado ninguna canción para aprender.",
     "browse": "Explorar",
-    "new": "Nuevas",
-    "learn": "Aprender",
-    "due": "Pendientes"
+    "newSongs": "Canciones Nuevas"
   },
   
   "songList": {

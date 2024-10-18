@@ -5,12 +5,11 @@ import { useNavigate } from 'react-router-dom';
 
 interface CloseHeaderProps {
   onAction: () => void;
-  title?: string;
   type: 'close' | 'back';
   fallbackPath?: string;  // Add this line
 }
 
-const CloseHeader: React.FC<CloseHeaderProps> = ({ onAction, title, type, fallbackPath }) => {
+const CloseHeader: React.FC<CloseHeaderProps> = ({ onAction, type, fallbackPath }) => {
   const navigate = useNavigate();
 
   const handleAction = () => {
@@ -29,7 +28,7 @@ const CloseHeader: React.FC<CloseHeaderProps> = ({ onAction, title, type, fallba
       >
         {type === 'back' ? <ChevronLeft className="w-5 h-5" /> : <X className="w-5 h-5" />}
       </Button>
-      {title && <h2 className="text-lg font-semibold text-neutral-100">{title}</h2>}
+
       <div className="w-5 h-5" />
     </div>
   );

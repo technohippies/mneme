@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { dotStream } from 'ldrs';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Volume2, Music, Pause } from 'lucide-react';
+import { ArrowLeft, Volume2, Music, Pause } from 'lucide-react';;
 import { phraseService } from '../../services/orbis/phraseService';
 import { songService } from '../../services/orbis/songService';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
@@ -17,16 +17,16 @@ import loadingImage from '/images/loading-image.png';
 dotStream.register();
 
 const DeckStudyPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { geniusSlug } = useParams<{ geniusSlug: string }>();
   const navigate = useNavigate();
-  const [deck, setDeck] = useState<DeckType | null>(null);
+  const [song, setSong] = useState<DeckType | null>(null);
   const [phraseStatus, setPhraseStatus] = useState<PhraseStatus | null>(null);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isInUserDeck, setIsInUserDeck] = useState(false);
+  const [isInUserSongs, setIsInUserSongs] = useState(false);
   const { authenticateCeramic, user } = useAuth();
 
   const userSongService = useMemo(() => createUserSongService(authenticateCeramic), [authenticateCeramic]);
@@ -76,64 +76,64 @@ const DeckStudyPage: React.FC = () => {
     );
   };
 
-  const fetchDeckData = useCallback(async () => {
+  const fetchSongData = useCallback(async () => {
     if (!geniusSlug) {
       console.error('No geniusSlug provided');
-      setError('No song selected. Please choose a song from the list.');
+      setError(t('songStudy.songNotFound'));
       setIsLoading(false);
       return;
     }
 
-    console.log('Fetching deck data for geniusSlug:', geniusSlug);
+    console.log('Fetching song data for geniusSlug:', geniusSlug);
     setIsLoading(true);
     setError(null);
 
     try {
-      const song = await songService.getSongByGeniusSlug(geniusSlug);
+      const fetchedSong = await songService.getSongByGeniusSlug(geniusSlug);
       
-      if (!song) {
+      if (!fetchedSong) {
         throw new Error(`Song not found for geniusSlug: ${geniusSlug}`);
       }
 
-      console.log('Fetched song:', JSON.stringify(song, null, 2));
+      console.log('Fetched song:', JSON.stringify(fetchedSong, null, 2));
 
       const [status, phrasesData] = await Promise.all([
-        userLearningDataService.getPhraseStatus(song.uuid, user?.did || ''),
-        phraseService.getPhrases(song.uuid)
+        userLearningDataService.getPhraseStatus(fetchedSong.uuid, user?.did || ''),
+        phraseService.getPhrases(fetchedSong.uuid)
       ]);
       
       console.log('Phrase status:', JSON.stringify(status, null, 2));
       console.log('Fetched phrases:', JSON.stringify(phrasesData, null, 2));
       
-      const newDeck = createDeckFromSong(song);
-      console.log('Created deck:', JSON.stringify(newDeck, null, 2));
-      setDeck(newDeck);
+      const newSong = createDeckFromSong(fetchedSong);
+      console.log('Created song:', JSON.stringify(newSong, null, 2));
+      setSong(newSong);
       setPhraseStatus(status);
       setPhrases(phrasesData);
 
-      const initializationStatus = await userLearningDataService.checkDeckInitialization(song.uuid, user?.did || '');
-      const inUserDeck = await userSongService.isSongInUserDeck(song.uuid);
+      const initializationStatus = await userLearningDataService.checkDeckInitialization(fetchedSong.uuid, user?.did || '');
+      const inUserSongs = await userSongService.isSongInUserDeck(fetchedSong.uuid);
 
       console.log('Initialization status:', JSON.stringify(initializationStatus, null, 2));
-      console.log('Is in user deck:', inUserDeck);
+      console.log('Is in user songs:', inUserSongs);
 
       setIsInitialized(initializationStatus.isFullyInitialized);
-      setIsInUserDeck(inUserDeck);
+      setIsInUserSongs(inUserSongs);
     } catch (error: unknown) {
-      console.error('Error fetching deck data:', error);
-      setError(`Failed to load deck data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Error fetching song data:', error);
+      setError(`${t('songStudy.errorAddingSong')} ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
-  }, [geniusSlug, user, userSongService]);
+  }, [geniusSlug, user, userSongService, t]);
 
   useEffect(() => {
     console.log('DeckStudyPage - geniusSlug:', geniusSlug);
-    fetchDeckData();
-  }, [fetchDeckData, geniusSlug]);
+    fetchSongData();
+  }, [fetchSongData, geniusSlug]);
 
   const handleBack = useCallback(() => {
-    navigate('/decks');
+    navigate(-1);
   }, [navigate]);
 
   const handleStudyClick = useCallback(() => {
@@ -145,32 +145,30 @@ const DeckStudyPage: React.FC = () => {
     }
   }, [geniusSlug, navigate, phraseStatus]);
 
-  const handleAddDeck = useCallback(async () => {
-    if (deck && user) {
+  const handleAddSong = useCallback(async () => {
+    if (song && user) {
       setIsLoading(true);
       try {
-        await userSongService.addSongToDeck(deck.id);
-        // Use optional chaining and provide a fallback empty string
+        await userSongService.addSongToDeck(song.id);
         await userLearningDataService.initializeUserLearningDataForSong(
-          deck.id,
+          song.id,
           user.did ?? '',
           authenticateCeramic
         );
-        // Use optional chaining and provide a fallback empty string
         const initializationStatus = await userLearningDataService.checkDeckInitialization(
-          deck.id,
+          song.id,
           user.did ?? ''
         );
         setIsInitialized(initializationStatus.isFullyInitialized);
-        setIsInUserDeck(true);
+        setIsInUserSongs(true);
       } catch (error) {
-        console.error('Error adding deck:', error);
-        setError('Failed to add deck. Please try again.');
+        console.error('Error adding song:', error);
+        setError(t('songStudy.errorAddingSong'));
       } finally {
         setIsLoading(false);
       }
     }
-  }, [deck, user, userSongService, authenticateCeramic, userLearningDataService]);
+  }, [song, user, userSongService, authenticateCeramic, userLearningDataService, t]);
 
   const handleMatchClick = useCallback(() => {
     if (geniusSlug) {
@@ -178,6 +176,19 @@ const DeckStudyPage: React.FC = () => {
       navigate(`/deck/${geniusSlug}/match`, { state: { geniusSlug } });
     }
   }, [geniusSlug, navigate]);
+
+  const handleKaraokeClick = useCallback(() => {
+    if (geniusSlug) {
+      console.log('[DeckStudyPage] Navigating to karaoke study with geniusSlug:', geniusSlug);
+      navigate(`/deck/${geniusSlug}/karaoke`);
+    }
+  }, [geniusSlug, navigate]);
+
+  const getTranslatedTitle = useCallback((song: DeckType) => {
+    const currentLanguage = i18n.language;
+    const translatedTitleKey = `song_title_${currentLanguage}`;
+    return song.translatedTitles?.[translatedTitleKey] || null;
+  }, [i18n.language]);
 
   if (isLoading) {
     return (
@@ -199,7 +210,7 @@ const DeckStudyPage: React.FC = () => {
     );
   }
 
-  if (error || !deck) {
+  if (error || !song) {
     return (
       <div className="flex flex-col h-screen bg-neutral-900 text-neutral-100">
         <button
@@ -209,89 +220,110 @@ const DeckStudyPage: React.FC = () => {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div className="flex-grow p-4">
-          <p className="text-red-500">{error || t('deckStudy.deckNotFound')}</p>
+          <p className="text-red-500">{error || t('songStudy.songNotFound')}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-neutral-900 text-neutral-100">
-      <button
-        onClick={handleBack}
-        className="p-4 text-neutral-100 hover:text-neutral-200"
+    <div className="flex flex-col min-h-screen bg-neutral-900 text-neutral-100">
+      {/* Top portion with background image */}
+      <div 
+        className="relative w-full pb-[100%] bg-cover bg-center"
+        style={{
+          backgroundImage: `url(https://warp.dolpin.io/ipfs/${song.img_cid})`,
+        }}
       >
-        <ArrowLeft className="w-6 h-6" />
-      </button>
-      <div className="flex-grow p-4 overflow-auto pb-20"> {/* Added pb-20 for bottom padding */}
-        <div className="flex items-center mb-4">
-          <img
-            src={`https://warp.dolpin.io/ipfs/${deck.img_cid}`}
-            alt={deck.name}
-            className="w-36 h-36 object-cover rounded-lg mr-4"
-            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-              e.currentTarget.src = "/images/placeholder.png";
-            }}
-          />
-          <div>
-            <h1 className="text-xl font-bold">{deck?.name}</h1>
-            <h2 className="text-lg text-neutral-400">{deck?.artist}</h2>
+        {/* Gradient overlay for better text visibility and bottom fade */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-neutral-900"></div>
+        
+        {/* Content */}
+        <div className="absolute inset-0 flex flex-col">
+          {/* Back button */}
+          <button
+            onClick={handleBack}
+            className="absolute top-6 left-6 text-neutral-100 hover:text-neutral-200 z-20"
+          >
+            <ArrowLeft className="w-8 h-8" />
+          </button>
+          
+          {/* Song info and status */}
+          <div className="flex flex-col items-center justify-end h-full">
+            {getTranslatedTitle(song) && (
+              <h1 className="text-2xl font-medium text-center mb-1 text-neutral-300 drop-shadow-lg px-4">
+                {getTranslatedTitle(song)}
+              </h1>
+            )}
+            <h1 className="text-3xl font-bold text-center mb-2 drop-shadow-lg px-4">{song?.name}</h1>
+            <h2 className="text-xl text-neutral-300 mb-6 drop-shadow-lg px-4">{song?.artist}</h2>
+            {isInitialized && isInUserSongs && phraseStatus && (
+              <FlashcardStatusDisplay status={phraseStatus} isLoading={false} />
+            )}
           </div>
         </div>
-        {phraseStatus && (
-          <div>
-            <FlashcardStatusDisplay status={phraseStatus} isLoading={false} />
+      </div>
+
+      {/* Rest of the content */}
+      <div className="flex-grow overflow-auto">
+        <div className="p-6 pb-20">
+          {!isInitialized && !isInUserSongs ? (
+            <Button
+              onClick={handleAddSong}
+              className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            >
+              {t('songStudy.addSong')}
+            </Button>
+          ) : (
+            <>
+              <Button
+                onClick={handleStudyClick}
+                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                {phraseStatus && phraseStatus.studied_today >= 20 ? t('songStudy.studyFlashcardsAgain') : 
+                 (phraseStatus && phraseStatus.studied_today > 0 ? t('songStudy.continueFlashcards') : t('songStudy.studyFlashcards'))}
+              </Button>
+              <Button
+                onClick={handleMatchClick}
+                className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+              >
+                {t('songStudy.matchPhrases')}
+              </Button>
+              <Button
+                onClick={handleKaraokeClick}
+                className="mt-4 w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+              >
+                {t('songStudy.playKaraoke')}
+              </Button>
+            </>
+          )}
+
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-4">{t('songStudy.lines', { count: phrases.length })}</h2>
+            <ul className="space-y-4">
+              {phrases.map((phrase) => (
+                <li key={phrase.phrase_id} className="bg-neutral-800 rounded-md overflow-hidden">
+                  <div className="p-4">
+                    {phrase.text.split('\\n').map((line, index) => (
+                      <React.Fragment key={index}>
+                        <p className="text-md font-medium mb-0 mt-1">{line}</p>
+                        {phrase.text_cmn && (
+                          <p className="text-md text-neutral-300 mb-2">
+                            {phrase.text_cmn.split('\\n')[index]}
+                          </p>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  <div className="flex h-14 bg-neutral-700">
+                    {renderAudioControl(phrase.tts_cid, 'tts')}
+                    <div className="w-px h-full bg-neutral-600"></div>
+                    {renderAudioControl(phrase.audio_cid, 'song')}
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
-        )}
-        {!isInitialized && !isInUserDeck ? (
-          <Button
-            onClick={handleAddDeck}
-            className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {t('deckStudy.addDeck')}
-          </Button>
-        ) : (
-          <>
-            <Button
-              onClick={handleStudyClick}
-              className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              {phraseStatus && phraseStatus.studied_today >= 20 ? t('deckStudy.studyFlashcardsAgain') : 
-               (phraseStatus && phraseStatus.studied_today > 0 ? t('deckStudy.continueFlashcards') : t('deckStudy.studyFlashcards'))}
-            </Button>
-            <Button
-              onClick={handleMatchClick}
-              className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
-            >
-              {t('deckStudy.matchPhrases')}
-            </Button>
-          </>
-        )}
-        <div className="mt-8">
-          <h2 className="text-lg font-semibold mb-4">{t('deckStudy.phrases', { count: phrases.length })}</h2>
-          <ul className="space-y-4">
-            {phrases.map((phrase) => (
-              <li key={phrase.phrase_id} className="bg-neutral-800 rounded-lg overflow-hidden">
-                <div className="p-4">
-                  {phrase.text.split('\\n').map((line, index) => (
-                    <React.Fragment key={index}>
-                      <p className="text-md font-medium mt-1">{line}</p>
-                      {phrase.text_cmn && (
-                        <p className="text-sm text-neutral-400 mb-1">
-                          {phrase.text_cmn.split('\\n')[index]}
-                        </p>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-                <div className="flex h-14 bg-neutral-700">
-                  {renderAudioControl(phrase.tts_cid, 'tts')}
-                  <div className="w-px h-full bg-neutral-600"></div>
-                  {renderAudioControl(phrase.audio_cid, 'song')}
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </div>
@@ -319,6 +351,7 @@ function createDeckFromSong(song: Song): DeckType {
     episode: undefined,
     reference_url: undefined,
     target_language_2: undefined,
+    translatedTitles: song.translatedTitles, // Add this line
   };
 }
 

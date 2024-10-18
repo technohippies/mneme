@@ -4,17 +4,19 @@ import { useTranslation } from 'react-i18next';
 import { createUserSongService } from '../../services/orbis/userSongService';
 import { useAuthenticateCeramic } from '../../services/orbis/authService';
 import { songService } from '../../services/orbis/songService';
-import { DeckType, PhraseStatus } from '../../types';
+import { DeckType, PhraseStatus, Song } from '../../types';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
 import { truncateTitle } from '@/lib/utils'; // Make sure this utility function is available
 import loadingImage from '/images/loading-image.png';
 import { motion } from 'framer-motion';
+import SongListItem from '../core/SongListItem';
 
 const DecksListPage: React.FC = () => {
   const { t } = useTranslation();
   const [decks, setDecks] = useState<DeckType[]>([]);
+  const [newSongs, setNewSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasFetched, setHasFetched] = useState(false);
   const authenticateCeramic = useAuthenticateCeramic();
@@ -48,6 +50,12 @@ const DecksListPage: React.FC = () => {
           } as DeckType;
         }));
         setDecks(formattedDecks);
+
+        // Fetch new songs
+        const allSongs = await songService.getSongs();
+        const userSongIds = new Set(formattedDecks.map(deck => deck.id));
+        const newSongsFiltered = allSongs.filter(song => !userSongIds.has(song.uuid));
+        setNewSongs(newSongsFiltered);
       } catch (error) {
         console.error('Error fetching decks:', error);
       } finally {
@@ -67,12 +75,16 @@ const DecksListPage: React.FC = () => {
     fetchDecks();
   }, [fetchDecks]);
 
-  const SectionHeader = ({ title }: { title: string }) => (
+  const SectionHeader = ({ title, showStats = true }: { title: string, showStats?: boolean }) => (
     <div className="flex items-center mb-2 relative">
       <h1 className="text-neutral-200 text-xl font-bold">{title}</h1>
-      <div className="absolute right-28 w-10 text-center text-neutral-400 text-md">New</div>
-      <div className="absolute right-16 w-10 text-center text-neutral-400 text-md">Learn</div>
-      <div className="absolute right-4 w-10 text-center text-neutral-400 text-md">Due</div>
+      {showStats && (
+        <>
+          <div className="absolute right-28 w-10 text-center text-neutral-400 text-md">{t('decksList.new')}</div>
+          <div className="absolute right-16 w-10 text-center text-neutral-400 text-md">{t('decksList.learn')}</div>
+          <div className="absolute right-4 w-10 text-center text-neutral-400 text-md">{t('decksList.due')}</div>
+        </>
+      )}
     </div>
   );
 
@@ -99,8 +111,8 @@ const DecksListPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 h-full flex flex-col">
-      {decks.length > 0 ? (
+    <div className="container mx-auto px-4 py-8 h-full overflow-y-auto">
+      {decks.length > 0 && (
         <div className="mb-8">
           <SectionHeader title={t('decksList.yourSongs')} />
           {decks.map((deck) => (
@@ -137,9 +149,21 @@ const DecksListPage: React.FC = () => {
             </Link>
           ))}
         </div>
-      ) : (
+      )}
+
+      <div className="mb-8">
+        <SectionHeader title={t('decksList.newSongs')} showStats={false} />
+        {newSongs.length > 0 ? (
+          newSongs.map((song) => (
+            <SongListItem key={song.uuid} song={song} />
+          ))
+        ) : (
+          <p className="text-neutral-300">{t('songList.noSongsAvailable')}</p>
+        )}
+      </div>
+
+      {decks.length === 0 && (
         <div className="flex-grow flex flex-col items-center justify-center">
-          <p className="text-neutral-300 text-lg mb-4">{t('decksList.noSongsAdded')}</p>
           <Button
             variant="blue"
             size="lg"

@@ -21,10 +21,10 @@ const buttonVariants = cva(
         blue: "bg-blue-600 text-white hover:bg-blue-700", // Add this line
       },
       size: {
-        default: "h-9 px-4 py-2",
+        default: "h-12 px-4 py-2", // Changed from h-9 to h-12
         sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        lg: "h-14 rounded-md px-8", // Optionally increased from h-10 to h-14
+        icon: "h-12 w-12", // Changed from h-9 w-9 to h-12 w-12
       },
     },
     defaultVariants: {

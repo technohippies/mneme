@@ -52,7 +52,7 @@
     "winPrizes": "ポケモンカードとNFTを獲得しよう！",
     "signToContinue": "続けるにはサインしてください",
     "xmtpDescription": "XMTPはイーサリアムウォレット間でメッセージを送受信します。",
-    "ceramicDescription": "Ceramicはあなたのデータを保存し、他のdappsにインポートできるようにします。",
+    "ceramicDescription": "Ceramicあなたのデータを保存し、他のdappsにインポートできるようにします。",
     "signing": "サイン中...",
     "sign": "サイン"
   },
@@ -76,31 +76,30 @@
     "unavailable": "スコア利用不可"
   },
   
-  "deckStudy": {
-    "deckNotFound": "デッキが見つかりません",
-    "phrases": "フレーズ ({{count}})",
-    "addDeck": "デッキを追加",
+  "songStudy": {
+    "songNotFound": "曲が見つかりません",
+    "lines": "行 ({{count}})",
+    "addSong": "曲を追加",
     "startStudying": "学習を開始",
     "continueStudying": "学習を続ける",
     "studyAgain": "もう一度学習",
     "newCards": "新規",
     "learningCards": "学習中",
     "dueCards": "復習予定",
-    "deckAdded": "デッキが追加されました",
-    "errorAddingDeck": "デッキの追加中にエラーが発生しました。もう度お試しください。",
+    "songAdded": "曲が追加されました",
+    "errorAddingSong": "曲の追加中にエラーが発生しました。もう度お試しください。",
     "matchPhrases": "マッチングゲームをプレイ",
     "studyFlashcards": "フラッシュカードを学習",
     "continueFlashcards": "フラッシュカードを続ける",
-    "studyFlashcardsAgain": "フラッシュカードをもう一度学習"
+    "studyFlashcardsAgain": "フラッシュカードをもう一度学習",
+    "playKaraoke": "カラオケをプレイ"
   },
   
   "decksList": {
     "yourSongs": "あなたの曲",
     "noSongsAdded": "学習する曲がまだ追加されていません。",
     "browse": "ブラウズ",
-    "new": "新規",
-    "learn": "学習中",
-    "due": "復習予定"
+    "newSongs": "新しい曲"
   },
   
   "songList": {

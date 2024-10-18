@@ -107,6 +107,16 @@ export const songService = {
 
       // console.log('songService: getSongByGeniusSlug raw result', rows);
       const song = rows.length > 0 && isValidSong(rows[0]) ? rows[0] as Song : null;
+      
+      // Add this line to include all translated titles
+      if (song) {
+        song.translatedTitles = Object.fromEntries(
+          Object.entries(song).filter(([key, value]) => 
+            key.startsWith('song_title_') && key !== 'song_title_eng' && value
+          )
+        );
+      }
+      
       // console.log('songService: getSongByGeniusSlug processed result', song);
       return song;
     } catch (error) {

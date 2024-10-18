@@ -12,6 +12,7 @@ import SongListPage from './components/pages/SongListPage';
 import StorePage from './components/pages/StorePage';
 import { Navigate } from 'react-router-dom';
 import KeenSlider from './components/containers/KeenSlider';
+import KaraokeStudyPage from './components/pages/KaraokeStudyPage';
 
 export function AppRoutes() {
   return (
@@ -29,6 +30,7 @@ export function AppRoutes() {
       <Route path="/study-completion/:geniusSlug" element={<StudyCompletionPage />} />
       <Route path="/songs" element={<SongListPage />} />
       <Route path="/u/:identifier" element={<ProfilePage />} />
+      <Route path="/deck/:geniusSlug/karaoke" element={<KaraokeStudyPage />} />
       
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -20,7 +20,6 @@ import DeckStudyPage from './components/pages/DeckStudyPage';
 import FlashcardsPage from './components/pages/FlashcardsPage';
 import StudyCompletionPage from './components/pages/StudyCompletionPage';
 import KeenSlider from './components/containers/KeenSlider';
-import SongListPage from './components/pages/SongListPage';
 
 const AppContent: React.FC = () => {
   const [songs, setSongs] = useState<Song[]>([]);
@@ -126,13 +125,6 @@ const AppContent: React.FC = () => {
       <Route path="/deck/:geniusSlug" element={<AuthWrapper><DeckStudyPage /></AuthWrapper>} />
       <Route path="/deck/:geniusSlug/flashcards" element={<AuthWrapper><FlashcardsPage /></AuthWrapper>} />
       <Route path="/study-completion/:geniusSlug" element={<AuthWrapper><StudyCompletionPage /></AuthWrapper>} />
-      <Route path="/songs" element={
-        <AuthWrapper>
-          <LayoutWrapper>
-            <SongListPage />
-          </LayoutWrapper>
-        </AuthWrapper>
-      } />
     </Routes>
   );
 };

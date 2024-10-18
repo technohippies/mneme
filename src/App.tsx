@@ -20,10 +20,10 @@ import DeckStudyPage from './components/pages/DeckStudyPage';
 import FlashcardsPage from './components/pages/FlashcardsPage';
 import StudyCompletionPage from './components/pages/StudyCompletionPage';
 import KeenSlider from './components/containers/KeenSlider';
-import SongListPage from './components/pages/SongListPage';
 import { EditProfilePage } from './components/pages/EditProfilePage';  // Add this import
 import StorePage from './components/pages/StorePage';  // Add this import
 import MatchStudyPage from './components/pages/MatchStudyPage';  // Add this import
+import KaraokeStudyPage from './components/pages/KaraokeStudyPage';  // Add this import
 
 const AppContent: React.FC = () => {
   const { i18n } = useTranslation();
@@ -115,12 +115,8 @@ const AppContent: React.FC = () => {
         <Route path="/deck/:geniusSlug" element={<DeckStudyPage />} />
         <Route path="/deck/:geniusSlug/flashcards" element={<FlashcardsPage />} />
         <Route path="/study-completion/:geniusSlug" element={<StudyCompletionPage />} />
-        <Route path="/songs" element={
-          <LayoutWrapper>
-            <SongListPage />
-          </LayoutWrapper>
-        } />
         <Route path="/deck/:geniusSlug/match" element={<MatchStudyPage />} />
+        <Route path="/deck/:geniusSlug/karaoke" element={<KaraokeStudyPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthWrapper>

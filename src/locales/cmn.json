@@ -76,31 +76,31 @@
     "unavailable": "分数不可用"
   },
   
-  "deckStudy": {
-    "deckNotFound": "未找到卡组",
+  "songStudy": {
+    "songNotFound": "未找到歌曲",
     "phrases": "短语 ({{count}})",
-    "addDeck": "添加卡组",
+    "addSong": "添加歌曲",
     "startStudying": "开始学习",
     "continueStudying": "继续学习",
     "studyAgain": "再次学习",
     "newCards": "新卡片",
     "learningCards": "学习中",
     "dueCards": "待复习",
-    "deckAdded": "卡组已添加",
-    "errorAddingDeck": "添加卡组时出错。请重试。",
+    "songAdded": "歌曲已添加",
+    "errorAddingSong": "添加歌曲时出错。请重试。",
     "matchPhrases": "玩配对游戏",
     "studyFlashcards": "学习闪卡",
     "continueFlashcards": "继续闪卡",
-    "studyFlashcardsAgain": "再次学习闪卡"
+    "studyFlashcardsAgain": "再次学习闪卡",
+    "playKaraoke": "卡拉OK模式",
+    "lines": "歌词行 ({{count}})"
   },
   
   "decksList": {
     "yourSongs": "您的歌曲",
     "noSongsAdded": "您还没有添加任何歌曲来学习。",
     "browse": "浏览",
-    "new": "新",
-    "learn": "学习",
-    "due": "待复习"
+    "newSongs": "新歌曲"
   },
   
   "songList": {
@@ -111,7 +111,7 @@
   
   "errors": {
     "scoreTimeout": "未及时收到分数。请重试。",
-    "scoreError": "接收分数时出��。请重试。"
+    "scoreError": "接收分数时出错。请重试。"
   },
   
   "matchStudy": {

@@ -44,7 +44,7 @@ const DecksListPage: React.FC = () => {
             status: deck.status,
             img_cid: songDetails?.song_art_image_cid || '',
             genius_slug: songDetails?.genius_slug || '',
-            artist: songDetails?.artist_name_eng || 'Unknown Artist',
+            artist: songDetails?.artist_name_original || 'Unknown Artist',
           } as DeckType;
         }));
         setDecks(formattedDecks);

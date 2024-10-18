@@ -38,7 +38,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ song }) => {
             {truncateTitle(song.song_title_eng, 30)}
           </h2>
           <p className="text-sm text-neutral-300 truncate">
-            {truncateTitle(song.artist_name_eng, 30)}
+            {truncateTitle(song.artist_name_original, 30)}
           </p>
         </div>
       </div>

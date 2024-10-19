@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 import { waveform, orbit, trefoil } from 'ldrs';
 import { useAudioTime } from '../../hooks/useAudioTime';
 import { Phrase, Lyric, Song } from '../../types/index';
-import { PlusCircle, CheckCircle } from "@phosphor-icons/react";
+import { PlusCircle } from "@phosphor-icons/react";
 import { useTranslation } from 'react-i18next';
 
 // Register the loaders
@@ -28,7 +28,7 @@ export interface BasicKaraokeControlsProps {
   scoreError: string | null;
   showScore: boolean; // Add this line
   setShowScore: React.Dispatch<React.SetStateAction<boolean>>; // Add this line
-  currentSong: Song; // Add this line
+  currentSong: Song | undefined;
 }
 
 export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
@@ -44,7 +44,7 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
   scoreError,
   showScore,
   setShowScore,
-  currentSong, // Add this line
+  currentSong,
 }) => {
   const { t, i18n } = useTranslation();
   const [micPermissionGranted, setMicPermissionGranted] = React.useState(false);
@@ -59,6 +59,9 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
   const audioRef = useRef<MediaRecorder | null>(null);
   const latestScoreRef = React.useRef<number | undefined>(undefined);
   const latestPracticeScoreRef = React.useRef<number | undefined>(undefined);
+
+  // Add these logs near the top of the component
+  console.log('BasicKaraokeControls - props:', { isInDeck, currentSong });
 
   useEffect(() => {
     // console.log('BasicKaraokeControls - Current language:', i18n.language);
@@ -248,6 +251,11 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
 
   const [addSongState, setAddSongState] = React.useState<'add' | 'adding' | 'added'>(isInDeck ? 'added' : 'add');
 
+  useEffect(() => {
+    console.log('BasicKaraokeControls - isInDeck changed:', isInDeck);
+    setAddSongState(isInDeck ? 'added' : 'add');
+  }, [isInDeck]);
+
   const handleAddSongClick = async () => {
     setAddSongState('adding');
     try {
@@ -256,15 +264,8 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
     } catch (error) {
       console.error('Error adding song:', error);
       setAddSongState('add');
-      // Optionally, you can show an error message to the user here
     }
   };
-
-  useEffect(() => {
-    if (isInDeck) {
-      setAddSongState('added');
-    }
-  }, [isInDeck]);
 
   useEffect(() => {
     latestScoreRef.current = score;
@@ -292,9 +293,12 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
     showScore
   });
 
+  // Add a log before rendering the add song button
+  console.log('BasicKaraokeControls - Rendering add song button, state:', addSongState);
+
   return (
     <div className="karaoke-controls flex flex-col h-full w-full bg-neutral-900 text-white relative">
-      {currentPhrase && currentPhrase.background_image_cid ? (
+      {currentSong && currentPhrase && currentPhrase.background_image_cid ? (
         <div className="absolute inset-0 w-full h-full">
           <img 
             src={`https://warp.dolpin.io/ipfs/${currentPhrase.background_image_cid}`}
@@ -302,7 +306,7 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
             className="w-full h-full object-cover opacity-30"
           />
         </div>
-      ) : currentSong.header_image_cid ? (
+      ) : currentSong && currentSong.header_image_cid ? (
         <div className="absolute inset-0 w-full h-full">
           <img 
             src={`https://warp.dolpin.io/ipfs/${currentSong.header_image_cid}`}
@@ -326,41 +330,34 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
         )}
       </div>
       <div className="controls-container w-full p-4 flex flex-col space-y-4 relative z-20">
-        {/* Add Song button or Added indicator */}
+        {/* Add Song button */}
         <div className="flex justify-end">
-          <div className="flex flex-col items-center justify-center">
-            {addSongState === 'added' && (
-              <>
-                <CheckCircle size={32} weight="fill" className="text-green-500" />
-                <span className="text-xs mt-1">{t('karaokeControls.added')}</span>
-              </>
-            )}
-            {addSongState === 'adding' && (
-              <div className="flex flex-col items-center justify-center">
-                <l-trefoil
-                  size="32"
-                  stroke="4"
-                  stroke-length="0.15"
-                  bg-opacity="0.1"
-                  speed="1.4" 
-                  color="white" 
-                ></l-trefoil>
-                <span className="text-xs mt-1">{t('karaokeControls.adding')}</span>
-              </div>
-            )}
-            {addSongState === 'add' && (
-              <>
-                <button
-                  onClick={handleAddSongClick}
-                  className="text-white hover:text-orange-300 transition-colors"
-                  aria-label={t('karaokeControls.addSong')}
-                >
-                  <PlusCircle size={32} weight="fill" />
-                </button>
-                <span className="text-xs mt-1">{t('karaokeControls.addSong')}</span>
-              </>
-            )}
-          </div>
+          {addSongState === 'add' && (
+            <div className="flex flex-col items-center justify-center">
+              <button
+                onClick={handleAddSongClick}
+                className="text-white hover:text-orange-300 transition-colors"
+                aria-label={t('karaokeControls.addSong')}
+              >
+                <PlusCircle size={32} weight="fill" />
+              </button>
+              <span className="text-xs mt-1">{t('karaokeControls.addSong')}</span>
+            </div>
+          )}
+          {addSongState === 'adding' && (
+            <div className="flex flex-col items-center justify-center">
+              <l-trefoil
+                size="32"
+                stroke="4"
+                stroke-length="0.15"
+                bg-opacity="0.1"
+                speed="1.4" 
+                color="white" 
+              ></l-trefoil>
+              <span className="text-xs mt-1">{t('karaokeControls.adding')}</span>
+            </div>
+          )}
+          {/* Removed the 'added' state display */}
         </div>
         
         <div className="flex-grow flex flex-col justify-end space-y-4">

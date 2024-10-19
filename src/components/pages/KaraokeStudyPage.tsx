@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { KaraokeControls } from '../composite/KaraokeControls';
 import { songService } from '../../services/orbis/songService';
 import { phraseService } from '../../services/orbis/phraseService';
+import { createUserSongService } from '../../services/orbis/userSongService';
+import { useAuthenticateCeramic } from '../../services/orbis/authService';
 import { Song, Phrase } from '../../types/index';
 import CloseHeader from '../layout/CloseHeader';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +17,10 @@ const KaraokeStudyPage: React.FC = () => {
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [scoreError, setScoreError] = useState<string | null>(null);
+  const [isInDeck, setIsInDeck] = useState(false);
   const navigate = useNavigate();
+  const authenticateCeramic = useAuthenticateCeramic();
+  const userSongService = useMemo(() => createUserSongService(authenticateCeramic), [authenticateCeramic]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,13 +30,17 @@ const KaraokeStudyPage: React.FC = () => {
           setSong(fetchedSong);
           const fetchedPhrases = await phraseService.getPhrases(fetchedSong.uuid);
           setPhrases(fetchedPhrases);
+          
+          // Check if the song is in the user's deck
+          const songInDeck = await userSongService.isSongInUserDeck(fetchedSong.uuid);
+          setIsInDeck(songInDeck);
         }
       }
       setIsLoading(false);
     };
 
     fetchData();
-  }, [geniusSlug]);
+  }, [geniusSlug, userSongService]);
 
   const handleClose = () => {
     navigate('/decks');
@@ -51,6 +60,15 @@ const KaraokeStudyPage: React.FC = () => {
       return { score: undefined, scoreReceived: false };
     }
   }, []);
+
+  const handleAddSong = useCallback(async () => {
+    if (song) {
+      const added = await userSongService.addSongToDeck(song.uuid);
+      if (added) {
+        setIsInDeck(true);
+      }
+    }
+  }, [song, userSongService]);
 
   const LoadingScreen = useMemo(() => () => (
     <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 z-50">
@@ -84,11 +102,11 @@ const KaraokeStudyPage: React.FC = () => {
       <div className="flex-grow overflow-hidden">
         <KaraokeControls
           phrases={phrases}
-          audioUrl={`https://warp.dolpin.io/ipfs/${song.audio_cid}`}
+          audioUrl={song ? `https://warp.dolpin.io/ipfs/${song.audio_cid}` : ''}
           onPhraseComplete={() => {}}
-          onAddSong={() => {}}
+          onAddSong={handleAddSong}
           onRecordingComplete={handleRecordingComplete}
-          isInDeck={false}
+          isInDeck={isInDeck}
           currentSong={song}
           scoreError={scoreError}
         />

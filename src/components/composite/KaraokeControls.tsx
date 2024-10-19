@@ -2,17 +2,16 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { BasicKaraokeControls, BasicKaraokeControlsProps } from './BasicKaraokeControls';
 import { useWalletClient } from 'wagmi';
 import { sendAudioMessage, startMessageStream, parseScoreFromMessage, setMessageStreamCallback } from '../../services/xmtpService';
-import { createUserSongService } from '../../services/orbis/userSongService';
-import { useAuthenticateCeramic } from '../../services/orbis/authService';
-import { getCurrentUserDID } from '../../services/orbis/config';
-import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { DecodedMessage } from '@xmtp/xmtp-js';
 import { Song } from '../../types/index';
 
-export const KaraokeControls: React.FC<Omit<BasicKaraokeControlsProps, 'currentPhraseIndex' | 'setCurrentPhraseIndex' | 'lastReceivedScore' | 'showScore' | 'setShowScore' | 'currentSong'> & { currentSong: Song }> = (props) => {
+type KaraokeControlsProps = Omit<BasicKaraokeControlsProps, 'currentPhraseIndex' | 'setCurrentPhraseIndex' | 'lastReceivedScore' | 'showScore' | 'setShowScore' | 'currentSong'> & {
+  currentSong: Song | null;
+  onAddSong: () => Promise<void>;
+};
+
+export const KaraokeControls: React.FC<KaraokeControlsProps> = (props) => {
   const { data: walletClient } = useWalletClient();
-  const authenticateCeramic = useAuthenticateCeramic();
-  const userSongService = React.useMemo(() => createUserSongService(authenticateCeramic), [authenticateCeramic]);
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [lastReceivedScore, setLastReceivedScore] = useState<number | undefined>(undefined);
   const latestScoreRef = useRef<number | undefined>(undefined);
@@ -20,8 +19,6 @@ export const KaraokeControls: React.FC<Omit<BasicKaraokeControlsProps, 'currentP
   const [currentPairId, setCurrentPairId] = useState<string | null>(null);
   const [showScore, setShowScore] = useState(false);
   const [scoreError, setScoreError] = useState<string | null>(null);
-
-  // Remove isXmtpInitialized state and setupXMTP function
 
   const handleMessage = useCallback((message: DecodedMessage) => {
     console.log('Received message in stream:', message);
@@ -50,7 +47,6 @@ export const KaraokeControls: React.FC<Omit<BasicKaraokeControlsProps, 'currentP
     setMessageStreamCallback(handleMessage);
     startMessageStream().catch(console.error);
     return () => {
-      // Use an empty function instead of null
       setMessageStreamCallback(() => {});
     };
   }, [handleMessage]);
@@ -94,38 +90,17 @@ export const KaraokeControls: React.FC<Omit<BasicKaraokeControlsProps, 'currentP
     }
   }, [walletClient, props.phrases, currentPhraseIndex]);
 
-  const handleAddSong = async () => {
-    const songUuid = props.phrases[0]?.song_uuid;
-    const userDid = await getCurrentUserDID();
-
-    if (!songUuid || !userDid) {
-      console.error('Missing song UUID or user DID');
-      return;
-    }
-
-    try {
-      await userSongService.addSongToDeck(songUuid);
-      await userLearningDataService.initializeUserLearningDataForSong(songUuid, userDid, authenticateCeramic);
-      console.log('Data initialized for song:', songUuid);
-    } catch (error) {
-      console.error('Error initializing data:', error);
-    }
-
-    props.onAddSong();
-  };
-
   return (
     <BasicKaraokeControls
       {...props}
       onRecordingComplete={handleRecordingComplete}
-      onAddSong={handleAddSong}
       currentPhraseIndex={currentPhraseIndex}
       setCurrentPhraseIndex={setCurrentPhraseIndex}
       lastReceivedScore={lastReceivedScore}
       showScore={showScore}
       setShowScore={setShowScore}
       scoreError={scoreError}
-      currentSong={props.currentSong}
+      currentSong={props.currentSong || undefined}
     />
   );
 };

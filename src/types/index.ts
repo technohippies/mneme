@@ -130,6 +130,11 @@ export interface Song {
     song_title_fra?: string;
     song_title_spa?: string;
     song_title_ita?: string;
+    title: string;
+    artist: string;
+    album?: string;
+    year?: string;
+    genre?: string;
 }
 
 export interface Phrase {

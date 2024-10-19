@@ -1,5 +1,6 @@
 import { db, ORBIS_SONG_MODEL_ID } from './config';
 import { Song } from '../../types';
+import { Searcher } from 'fast-fuzzy';
 
 const isValidSong = (song: any): song is Song => {
   return (
@@ -43,23 +44,48 @@ export const songService = {
     }
   },
 
-  async searchSongs(query: string): Promise<Song[]> {
+  async searchSongs(query: string, language: string | null = null): Promise<Song[]> {
     try {
-      const allSongs = await this.getSongs();
-      const cleanQuery = query.trim().toLowerCase();
+      console.log('songService: Searching songs with query:', query, 'Language:', language);
+      let filteredSongs: Song[];
       
-      return allSongs
-        .filter(song => {
-          const titleMatch = song.song_title_eng.toLowerCase().includes(cleanQuery);
-          const artistMatch = song.artist_name_original.toLowerCase().includes(cleanQuery);
-          return titleMatch || artistMatch;
-        })
-        .sort((a, b) => {
-          const aRelevance = this.calculateRelevance(a, cleanQuery);
-          const bRelevance = this.calculateRelevance(b, cleanQuery);
-          return bRelevance - aRelevance;
-        })
-        .slice(0, 20); // Limit to top 20 results
+      if (language) {
+        filteredSongs = await this.getSongsByLanguage(language);
+      } else {
+        filteredSongs = await this.getSongs();
+      }
+      
+      console.log('songService: Filtered songs before search:', filteredSongs);
+
+      const cleanQuery = query.trim().toLowerCase();
+
+      if (cleanQuery === '') {
+        return filteredSongs.slice(0, 20); // Return first 20 songs if query is empty
+      }
+
+      // Perform exact matching first
+      const exactMatches = filteredSongs.filter(song => 
+        song.song_title_eng.toLowerCase().includes(cleanQuery) ||
+        song.artist_name_original.toLowerCase().includes(cleanQuery)
+      );
+
+      // If we have exact matches, return them
+      if (exactMatches.length > 0) {
+        console.log('songService: Exact matches found:', exactMatches);
+        return exactMatches.slice(0, 20);
+      }
+
+      // If no exact matches, use fuzzy search
+      const searcher = new Searcher(filteredSongs, {
+        keySelector: (song) => `${song.song_title_eng} ${song.artist_name_original}`,
+        threshold: 0.6, // Increased threshold for stricter matching
+      });
+
+      const searchResults = searcher.search(cleanQuery);
+      
+      console.log('songService: Fuzzy search results:', searchResults);
+
+      return searchResults.slice(0, 20); // Limit to top 20 results
     } catch (error) {
       console.error('Error searching songs:', error);
       throw error;
@@ -111,7 +137,7 @@ export const songService = {
         .select()
         .from(ORBIS_SONG_MODEL_ID)
         .where({ language })
-        .limit(15)
+        .limit(50) // Increased from 15 to 50
         .run();
       
       return rows.filter(isValidSong).map(song => ({

@@ -1,19 +1,20 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ScrollMenu } from 'react-horizontal-scrolling-menu';
+import 'react-horizontal-scrolling-menu/dist/styles.css';
 import { createUserSongService } from '../../services/orbis/userSongService';
 import { useAuthenticateCeramic } from '../../services/orbis/authService';
 import { songService } from '../../services/orbis/songService';
 import { DeckType, PhraseStatus, Song } from '../../types';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { useAuth } from '../../contexts/AuthContext';
-import { truncateTitle } from '@/lib/utils'; // Make sure this utility function is available
+import { truncateTitle } from '@/lib/utils';
 import loadingImage from '/images/loading-image.png';
 import { motion } from 'framer-motion';
-import { useMediaQuery } from 'react-responsive'; // Add this import
 
 const DecksListPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [decks, setDecks] = useState<DeckType[]>([]);
   const [englishSongs, setEnglishSongs] = useState<Song[]>([]);
   const [frenchSongs, setFrenchSongs] = useState<Song[]>([]);
@@ -77,9 +78,9 @@ const DecksListPage: React.FC = () => {
       <h1 className="text-neutral-200 text-xl font-bold">{title}</h1>
       {showStats && (
         <>
-          <div className="absolute right-28 w-10 text-center text-neutral-400 text-md">{t('decksList.new')}</div>
-          <div className="absolute right-16 w-10 text-center text-neutral-400 text-md">{t('decksList.learn')}</div>
-          <div className="absolute right-4 w-10 text-center text-neutral-400 text-md">{t('decksList.due')}</div>
+          <div className="absolute right-24 w-10 text-center text-neutral-400 text-md">{t('decksList.new')}</div>
+          <div className="absolute right-12 w-10 text-center text-neutral-400 text-md">{t('decksList.learn')}</div>
+          <div className="absolute right-0 w-10 text-center text-neutral-400 text-md">{t('decksList.due')}</div>
         </>
       )}
     </div>
@@ -103,8 +104,6 @@ const DecksListPage: React.FC = () => {
     </div>
   ), []);
 
-  const isDesktop = useMediaQuery({ minWidth: 1024 });
-
   // Add this CSS class for styled scrollbars
   const scrollbarStyle = `
     .custom-scrollbar::-webkit-scrollbar {
@@ -122,34 +121,56 @@ const DecksListPage: React.FC = () => {
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #5a5a5a;
     }
+    .hide-scrollbar {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .react-horizontal-scrolling-menu--scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+    .react-horizontal-scrolling-menu--scroll-container {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
   `;
 
-  const SongGrid = ({ songs, title }: { songs: Song[], title: string }) => {
+  const SongGrid = ({ songs, title, language }: { songs: Song[], title: string, language: string }) => {
     const navigate = useNavigate();
 
+    const getSongTitle = (song: Song, lang: string): string => {
+      const titleKey = `song_title_${lang}` as keyof Song;
+      return (song[titleKey] as string) || song.song_title_eng;
+    };
+
+    const SongCard = ({ song, index }: { song: Song, index: number }) => (
+      <div 
+        className={`flex-shrink-0 w-36 cursor-pointer ${index !== 0 ? 'ml-4' : ''}`}
+        onClick={() => navigate(`/deck/${song.genius_slug}`)}
+      >
+        <img
+          src={`https://warp.dolpin.io/ipfs/${song.song_art_image_cid}`}
+          alt={getSongTitle(song, language)}
+          className="w-36 h-36 object-cover rounded-lg mb-2"
+          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+            e.currentTarget.src = "/images/placeholder.png";
+          }}
+        />
+        <p className="text-md font-medium truncate">{getSongTitle(song, language)}</p>
+        <p className="text-md text-neutral-400 truncate">{song.artist_name_original}</p>
+      </div>
+    );
+
     return (
-      <div className="mb-8">
+      <div className="mb-2">
         <h2 className="text-xl font-bold mb-4">{title}</h2>
-        <div className={`flex overflow-x-auto pb-4 space-x-4 ${isDesktop ? 'custom-scrollbar' : ''}`}>
-          {songs.map((song) => (
-            <div 
-              key={song.uuid} 
-              className="flex-shrink-0 w-36 cursor-pointer"
-              onClick={() => navigate(`/deck/${song.genius_slug}`)}
-            >
-              <img
-                src={`https://warp.dolpin.io/ipfs/${song.song_art_image_cid}`}
-                alt={song.song_title}
-                className="w-36 h-36 object-cover rounded-lg mb-2"
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  e.currentTarget.src = "/images/placeholder.png";
-                }}
-              />
-              <p className="text-md font-medium truncate">{song.song_title}</p>
-              <p className="text-md text-neutral-400 truncate">{song.artist_name_original}</p>
-            </div>
+        <ScrollMenu>
+          {songs.map((song, index) => (
+            <SongCard key={song.uuid} song={song} index={index} />
           ))}
-        </div>
+        </ScrollMenu>
       </div>
     );
   };
@@ -250,10 +271,12 @@ const DecksListPage: React.FC = () => {
   // Log the current state before rendering
   console.log('Current state:', { englishSongs, frenchSongs, spanishSongs, italianSongs });
 
+  const isEnglishBrowser = i18n.language.startsWith('en');
+
   return (
     <>
-      {isDesktop && <style>{scrollbarStyle}</style>}
-      <div className={`container mx-auto px-4 py-8 h-full overflow-y-auto ${isDesktop ? 'custom-scrollbar' : ''}`}>
+      <style>{scrollbarStyle}</style>
+      <div className="container mx-auto px-4 py-8 h-full overflow-y-auto custom-scrollbar">
         {decks.length > 0 && (
           <div className="mb-8">
             <SectionHeader title={t('decksList.yourSongs')} />
@@ -277,13 +300,13 @@ const DecksListPage: React.FC = () => {
                         {truncateTitle(deck.artist, 30)}
                       </p>
                     </div>
-                    <div className="absolute right-28 w-10 text-center text-lg font-medium">
+                    <div className="absolute right-24 w-10 text-center text-lg font-medium">
                       {deckStatuses[deck.id]?.new_count || 0}
                     </div>
-                    <div className="absolute right-16 w-10 text-center text-lg font-medium">
+                    <div className="absolute right-12 w-10 text-center text-lg font-medium">
                       {deckStatuses[deck.id]?.learning_count || 0}
                     </div>
-                    <div className="absolute right-4 w-10 text-center text-lg font-medium">
+                    <div className="absolute right-0 w-10 text-center text-lg font-medium">
                       {deckStatuses[deck.id]?.due_count || 0}
                     </div>
                   </div>
@@ -293,11 +316,22 @@ const DecksListPage: React.FC = () => {
           </div>
         )}
 
-        <div className="space-y-8">
-          <SongGrid songs={allSongs['eng'] || []} title={t('decksList.learnEnglish')} />
-          <SongGrid songs={allSongs['fra'] || []} title={t('decksList.learnFrench')} />
-          <SongGrid songs={allSongs['spa'] || []} title={t('decksList.learnSpanish')} />
-          <SongGrid songs={allSongs['ita'] || []} title={t('decksList.learnItalian')} />
+        <div className="space-y-4">
+          {isEnglishBrowser ? (
+            <>
+              <SongGrid songs={allSongs['spa'] || []} title={t('decksList.learnSpanish')} language={i18n.language} />
+              <SongGrid songs={allSongs['fra'] || []} title={t('decksList.learnFrench')} language={i18n.language} />
+              <SongGrid songs={allSongs['ita'] || []} title={t('decksList.learnItalian')} language={i18n.language} />
+              <SongGrid songs={allSongs['eng'] || []} title={t('decksList.learnEnglish')} language={i18n.language} />
+            </>
+          ) : (
+            <>
+              <SongGrid songs={allSongs['eng'] || []} title={t('decksList.learnEnglish')} language={i18n.language} />
+              <SongGrid songs={allSongs['fra'] || []} title={t('decksList.learnFrench')} language={i18n.language} />
+              <SongGrid songs={allSongs['spa'] || []} title={t('decksList.learnSpanish')} language={i18n.language} />
+              <SongGrid songs={allSongs['ita'] || []} title={t('decksList.learnItalian')} language={i18n.language} />
+            </>
+          )}
         </div>
       </div>
     </>

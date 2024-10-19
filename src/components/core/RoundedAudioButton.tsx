@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Loader2 } from "lucide-react";
+import { Play, Pause, CircleNotch } from "@phosphor-icons/react";
 import { Button } from '../ui/button';
 
 interface RoundedAudioButtonProps {
@@ -62,11 +62,11 @@ const RoundedAudioButton: React.FC<RoundedAudioButtonProps> = ({ cid, onPlay, on
       disabled={isLoading}
     >
       {isLoading ? (
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <CircleNotch weight="bold" className="h-8 w-8 animate-spin" />
       ) : isPlaying ? (
-        <Pause className="h-8 w-8" />
+        <Pause weight="fill" className="h-8 w-8" />
       ) : (
-        <Play className="h-8 w-8" />
+        <Play weight="fill" className="h-8 w-8" />
       )}
     </Button>
   );

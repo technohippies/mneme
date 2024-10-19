@@ -121,5 +121,13 @@
   
   "matchStudy": {
     "playAgain": "再玩一次"
+  },
+  
+  "search": {
+    "title": "搜索歌曲",
+    "placeholder": "输入歌曲或艺术家名称",
+    "results": "搜索结果",
+    "noResults": "未找到歌曲。请尝试不同的搜索词。",
+    "error": "搜索时发生错误。请重试。"
   }
 }

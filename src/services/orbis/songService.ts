@@ -2,61 +2,33 @@ import { db, ORBIS_SONG_MODEL_ID } from './config';
 import { Song } from '../../types';
 
 const isValidSong = (song: any): song is Song => {
-  console.log('Validating song:', song);
-  
-  if (!song) {
-    console.log('Song is null or undefined');
-    return false;
-  }
-
-  const checks = [
-    { field: 'uuid', type: 'string' },
-    { field: 'song_title_eng', type: 'string' },
-    { field: 'artist_name_original', type: 'string' }
-  ];
-
-  for (const check of checks) {
-    if (typeof song[check.field] !== check.type) {
-      console.log(`Invalid ${check.field}: expected ${check.type}, got ${typeof song[check.field]}`);
-      return false;
-    }
-    if (song[check.field]?.trim() === '') {
-      console.log(`Invalid ${check.field}: empty string`);
-      return false;
-    }
-  }
-
-  console.log('Song is valid');
-  return true;
+  return (
+    song &&
+    typeof song.uuid === 'string' &&
+    typeof song.song_title_eng === 'string' &&
+    typeof song.artist_name_original === 'string' &&
+    song.uuid.trim() !== '' &&
+    song.song_title_eng.trim() !== '' &&
+    song.artist_name_original.trim() !== ''
+  );
 };
 
 export const songService = {
   async getSongs(): Promise<Song[]> {
-    console.log('songService: getSongs called');
-    console.log('ORBIS_SONG_MODEL_ID:', ORBIS_SONG_MODEL_ID);
     try {
-      console.log('Attempting to fetch songs...');
-      const result = await db
+      const { rows } = await db
         .select()
         .from(ORBIS_SONG_MODEL_ID)
         .run();
       
-      console.log('Raw result:', result);
-      
-      const { rows } = result;
-      console.log('Fetched rows:', rows);
-      
-      const validSongs = rows.filter(isValidSong);
-      console.log('Valid songs:', validSongs);
-      return validSongs;
+      return rows.filter(isValidSong);
     } catch (error) {
-      console.error('songService: getSongs error', error);
+      console.error('Error fetching songs:', error);
       throw error;
     }
   },
 
   async getSongByUuid(uuid: string): Promise<Song | null> {
-    // console.log('songService: getSongByUuid called with uuid', uuid);
     try {
       const { rows } = await db
         .select()
@@ -64,36 +36,47 @@ export const songService = {
         .where({ uuid })
         .run();
       
-      const song = rows.length > 0 && isValidSong(rows[0]) ? rows[0] as Song : null;
-      // console.log('songService: getSongByUuid result', song);
-      return song;
+      return rows.length > 0 && isValidSong(rows[0]) ? rows[0] : null;
     } catch (error) {
-      // console.error('songService: getSongByUuid error', error);
+      console.error('Error fetching song by UUID:', error);
       throw error;
     }
   },
 
   async searchSongs(query: string): Promise<Song[]> {
-    // console.log('songService: searchSongs called with query', query);
     try {
-      const { rows } = await db
-        .select()
-        .from(ORBIS_SONG_MODEL_ID)
-        .run();
+      const allSongs = await this.getSongs();
+      const cleanQuery = query.trim().toLowerCase();
       
-      const lowerQuery = query.toLowerCase();
-      const filteredSongs = rows.filter((song: any) => 
-        isValidSong(song) &&
-        (song.song_title_eng.toLowerCase().includes(lowerQuery) ||
-        song.artist_name_original.toLowerCase().includes(lowerQuery))
-      );
-      
-      // console.log('songService: searchSongs result', filteredSongs);
-      return filteredSongs as Song[];
+      return allSongs
+        .filter(song => {
+          const titleMatch = song.song_title_eng.toLowerCase().includes(cleanQuery);
+          const artistMatch = song.artist_name_original.toLowerCase().includes(cleanQuery);
+          return titleMatch || artistMatch;
+        })
+        .sort((a, b) => {
+          const aRelevance = this.calculateRelevance(a, cleanQuery);
+          const bRelevance = this.calculateRelevance(b, cleanQuery);
+          return bRelevance - aRelevance;
+        })
+        .slice(0, 20); // Limit to top 20 results
     } catch (error) {
-      console.error('songService: searchSongs error', error);
+      console.error('Error searching songs:', error);
       throw error;
     }
+  },
+
+  calculateRelevance(song: Song, query: string): number {
+    let relevance = 0;
+    const title = song.song_title_eng.toLowerCase();
+    const artist = song.artist_name_original.toLowerCase();
+
+    if (title.startsWith(query)) relevance += 3;
+    if (artist.startsWith(query)) relevance += 2;
+    if (title.includes(query)) relevance += 1;
+    if (artist.includes(query)) relevance += 1;
+
+    return relevance;
   },
 
   async getSongByGeniusSlug(genius_slug: string): Promise<Song | null> {
@@ -101,12 +84,11 @@ export const songService = {
       const { rows } = await db
         .select()
         .from(ORBIS_SONG_MODEL_ID)
-        .where({ genius_slug: genius_slug })
+        .where({ genius_slug })
         .run();
 
-      const song = rows.length > 0 && isValidSong(rows[0]) ? rows[0] as Song : null;
-      
-      if (song) {
+      if (rows.length > 0 && isValidSong(rows[0])) {
+        const song = rows[0];
         song.translatedTitles = Object.fromEntries(
           Object.entries(song)
             .filter(([key, value]) => 
@@ -114,49 +96,44 @@ export const songService = {
             )
             .map(([key, value]) => [key, value as string])
         );
+        return song;
       }
-      
-      return song;
+      return null;
     } catch (error) {
-      console.error('songService: getSongByGeniusSlug error', error);
+      console.error('Error fetching song by Genius slug:', error);
       throw error;
     }
   },
 
   async getSongsByLanguage(language: string): Promise<Song[]> {
-    console.log(`Fetching songs for language: ${language}`);
     try {
-      const result = await db
+      const { rows } = await db
         .select()
         .from(ORBIS_SONG_MODEL_ID)
-        .where({ language: language })
+        .where({ language })
         .limit(15)
         .run();
       
-      const { rows } = result;
-      const validSongs = rows.filter(isValidSong).map(song => {
-        const titleKey = `song_title_${language}` as keyof Song;
-        return {
-          ...song,
-          song_title: song[titleKey] as string || song.song_title_eng
-        };
-      });
-      console.log(`Valid songs for ${language}:`, validSongs.length);
-      
-      return validSongs as Song[];
+      return rows.filter(isValidSong).map(song => ({
+        ...song,
+        song_title: song[`song_title_${language}` as keyof Song] as string || song.song_title_eng
+      }));
     } catch (error) {
-      console.error(`songService: getSongsByLanguage error for ${language}:`, error);
+      console.error(`Error fetching songs for language ${language}:`, error);
       throw error;
     }
   },
 };
 
-// Add this function to test the connection
 export const logCeramicConnectionStatus = async () => {
-  const isConnected = await db.isUserConnected();
-  console.log('Is user connected to Ceramic:', isConnected);
-  if (isConnected) {
-    const user = await db.getConnectedUser();
-    console.log('Connected user:', user);
+  try {
+    const isConnected = await db.isUserConnected();
+    console.log('Is user connected to Ceramic:', isConnected);
+    if (isConnected) {
+      const user = await db.getConnectedUser();
+      console.log('Connected user:', user);
+    }
+  } catch (error) {
+    console.error('Error checking Ceramic connection status:', error);
   }
 };

@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
-import { Clipboard, AlertTriangle, Share2, Check } from 'lucide-react';
-import { ExternalLink } from 'lucide-react';
+import { ClipboardText, CheckCircle, ShareNetwork, Warning, ArrowSquareOut } from "@phosphor-icons/react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useAuth } from '../../contexts/AuthContext';
@@ -142,9 +141,9 @@ export function ProfilePage() {
                 }}
               >
                 {localCopiedStates['address'] ? (
-                  <Check className="w-4 h-4 text-green-500" />
+                  <CheckCircle className="w-4 h-4 text-green-500" />
                 ) : (
-                  <Clipboard className="w-4 h-4" />
+                  <ClipboardText className="w-4 h-4" />
                 )}
               </Button>
             </div>
@@ -164,9 +163,9 @@ export function ProfilePage() {
                     }}
                   >
                     {localCopiedStates[`name-${index}`] ? (
-                      <Check className="w-4 h-4 text-green-500" />
+                      <CheckCircle className="w-4 h-4 text-green-500" />
                     ) : (
-                      <Clipboard className="w-4 h-4" />
+                      <ClipboardText className="w-4 h-4" />
                     )}
                   </Button>
                 </div>
@@ -276,8 +275,9 @@ export function ProfilePage() {
               </h2>
               <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerTrigger asChild>
-                  <Share2 
-                    className="w-5 h-5 text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors duration-200" 
+                  <ShareNetwork 
+                    weight="fill"
+                    className="w-6 h-6 text-neutral-400 hover:text-neutral-200 cursor-pointer transition-colors duration-200" 
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -304,7 +304,7 @@ export function ProfilePage() {
             <div className="text-center mx-4 w-24">
               <div className="h-12 flex items-center justify-center">
                 {isOwnProfile && !hasEFPList ? (
-                  <AlertTriangle className="text-yellow-500" />
+                  <Warning weight="fill" className="text-yellow-500 w-8 h-8" />
                 ) : (
                   <p className="text-2xl font-bold">{stats.followers}</p>
                 )}
@@ -314,7 +314,7 @@ export function ProfilePage() {
             <div className="text-center mx-4 w-24">
               <div className="h-12 flex items-center justify-center">
                 {isOwnProfile && !hasEFPList ? (
-                  <AlertTriangle className="text-yellow-500" />
+                  <Warning weight="fill" className="text-yellow-500 w-8 h-8" />
                 ) : (
                   <p className="text-2xl font-bold">{stats.following}</p>
                 )}
@@ -337,7 +337,7 @@ export function ProfilePage() {
                 variant="blue"
                 className="w-full flex items-center justify-center"
               >
-                Follow <ExternalLink className="ml-2 w-4 h-4" />
+                Follow <ArrowSquareOut weight="bold" className="ml-2 w-4 h-4" />
               </Button>
             )}
           </div>

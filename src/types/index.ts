@@ -80,7 +80,7 @@ export interface DeckType {
     target_language_2?: string;
     genius_slug: string;
     artist: string;
-    translatedTitles?: { [key: string]: string }; // Add this line
+    translatedTitles?: { [key: string]: string | undefined }; // Update this line
 }
 
 export interface Song {

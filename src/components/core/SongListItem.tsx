@@ -22,7 +22,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ song }) => {
   return (
     <Link 
       to={`/deck/${song.genius_slug}`}
-      className="block mb-4 bg-neutral-800 hover:bg-neutral-700 rounded-md overflow-hidden shadow-sm transition-colors duration-200"
+      className="block bg-neutral-800 hover:bg-neutral-700 rounded-md overflow-hidden shadow-sm transition-colors duration-200"
     >
       <div className="flex items-center p-3 relative">
         <img

@@ -7,7 +7,7 @@ import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../../components/ui/form";
 import CloseHeader from '../layout/CloseHeader';
-import { Search, Loader2 } from 'lucide-react';
+import { MagnifyingGlass, CircleNotch } from "@phosphor-icons/react";
 import { setName } from '../../services/namestoneService';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -124,7 +124,7 @@ const DomainPage: React.FC = () => {
                           <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral-400">
                             .vstudent.eth
                           </span>
-                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
+                          <MagnifyingGlass weight="bold" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
                         </div>
                       </FormControl>
                       <FormMessage className="text-red-400" />
@@ -136,7 +136,7 @@ const DomainPage: React.FC = () => {
                   disabled={isChecking} 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  {isChecking ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : t('domain.checkAvailability')}
+                  {isChecking ? <CircleNotch weight="bold" className="mr-2 h-4 w-4 animate-spin" /> : t('domain.checkAvailability')}
                 </Button>
               </form>
             </Form>

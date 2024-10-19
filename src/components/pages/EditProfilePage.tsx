@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../../components/ui/form";
-import { Camera } from 'lucide-react';
+import { Camera } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import { getName, setName, claimName, uploadToPinata, checkDomainAvailability, updateAvatar } from "../../services/namestoneService";
@@ -252,7 +252,7 @@ export function EditProfilePage() {
                           color="white" 
                         ></l-tailspin>
                       ) : (
-                        <Camera className="w-8 h-8 text-white" />
+                        <Camera weight="fill" className="w-8 h-8 text-white" />
                       )}
                     </div>
                     <input
@@ -280,7 +280,7 @@ export function EditProfilePage() {
                           color="white" 
                         ></l-tailspin>
                       ) : (
-                        <Camera className="w-8 h-8 text-white" />
+                        <Camera weight="fill" className="w-8 h-8 text-white" />
                       )}
                     </div>
                     <input

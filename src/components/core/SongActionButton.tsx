@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { CirclePlus, CircleMinus } from 'lucide-react';
+import { PlusCircle, MinusCircle } from "@phosphor-icons/react";
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { getCurrentUserDID } from '../../services/orbis/config';
 import debounce from 'lodash/debounce';
@@ -70,9 +70,9 @@ const SongActionButton: React.FC<SongActionButtonProps> = ({ songUuid, userSongS
         {isLoading ? (
           <span>Loading...</span>
         ) : isInDeck ? (
-          <CircleMinus size={24} />
+          <MinusCircle size={24} weight="fill" />
         ) : (
-          <CirclePlus size={24} />
+          <PlusCircle size={24} weight="fill" />
         )}
       </button>
       <span className="text-xs mt-1 text-white">

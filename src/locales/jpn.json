@@ -25,7 +25,7 @@
     "premiumDomains": "プレミアムドメイン",
     "currentDomain": "現在のドメイン：",
     "buy": "購入",
-    "searchDomains": "ドメ��ンを検索"
+    "searchDomains": "ドメインを検索"
   },
   
   "settings": {
@@ -120,5 +120,13 @@
   
   "matchStudy": {
     "playAgain": "もう一度プレイ"
+  },
+  
+  "search": {
+    "title": "曲を検索",
+    "placeholder": "曲名またはアーティスト���を入力",
+    "results": "検索結果",
+    "noResults": "曲が見つかりません。別の検索語を試してください。",
+    "error": "検索中にエラーが発生しました。もう一度お試しください。"
   }
 }

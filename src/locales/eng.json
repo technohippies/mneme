@@ -132,5 +132,13 @@
   
   "matchStudy": {
     "playAgain": "Play Again"
+  },
+  
+  "search": {
+    "title": "Search",
+    "placeholder": "Enter song or artist name",
+    "results": "Search Results",
+    "noResults": "No songs found. Try a different search term.",
+    "error": "An error occurred while searching. Please try again."
   }
 }

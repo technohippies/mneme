@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 import { waveform, orbit, trefoil } from 'ldrs';
 import { useAudioTime } from '../../hooks/useAudioTime';
 import { Phrase, Lyric, Song } from '../../types/index';
-import { PlusCircle, CheckCircle } from 'lucide-react';
+import { PlusCircle, CheckCircle } from "@phosphor-icons/react";
 import { useTranslation } from 'react-i18next';
 
 // Register the loaders
@@ -331,7 +331,7 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
           <div className="flex flex-col items-center justify-center">
             {addSongState === 'added' && (
               <>
-                <CheckCircle size={32} className="text-green-500" />
+                <CheckCircle size={32} weight="fill" className="text-green-500" />
                 <span className="text-xs mt-1">{t('karaokeControls.added')}</span>
               </>
             )}
@@ -355,7 +355,7 @@ export const BasicKaraokeControls: React.FC<BasicKaraokeControlsProps> = ({
                   className="text-white hover:text-orange-300 transition-colors"
                   aria-label={t('karaokeControls.addSong')}
                 >
-                  <PlusCircle size={32} />
+                  <PlusCircle size={32} weight="fill" />
                 </button>
                 <span className="text-xs mt-1">{t('karaokeControls.addSong')}</span>
               </>

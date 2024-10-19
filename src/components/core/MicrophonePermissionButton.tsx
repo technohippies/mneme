@@ -1,5 +1,5 @@
 import { Button } from '../ui/button';
-import { Mic } from 'lucide-react';
+import { Microphone } from "@phosphor-icons/react";
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -39,7 +39,7 @@ export const MicrophonePermissionButton = ({
       className="w-full"
       variant="blue"
     >
-      <Mic className="mr-2 h-4 w-4" />
+      <Microphone weight="fill" className="mr-2 h-4 w-4" />
       <span>
         {isRequesting 
           ? t('microphonePermission.requestingAccess')

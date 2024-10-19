@@ -1,18 +1,13 @@
-import React, {useEffect, useState, useMemo } from 'react';
+import React, {useEffect, useMemo } from 'react';
 import { HashRouter, BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion'; // Add this import
-import loadingImage from '/images/loading-image.png';
 
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import StreakPage from './components/pages/StreakPage';
 import SettingsPage from './components/pages/SettingsPage';
 import { AuthWrapper } from './components/auth/AuthWrapper';
-import { songService } from './services/orbis/songService';
-import { phraseService } from './services/orbis/phraseService';
-import { Song, Phrase } from './types/index';
 import { ProfilePage } from "./components/pages/ProfilePage";
 import DomainPage from "./components/pages/DomainPage";
 import DecksListPage from './components/pages/DecksListPage';
@@ -33,24 +28,6 @@ const AppContent: React.FC = () => {
     const userLanguage = navigator.language.split('-')[0];
     i18n.changeLanguage(userLanguage);
   }, [i18n]);
-
-  const LoadingScreen = useMemo(() => () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 z-50">
-      <motion.img 
-        src={loadingImage} 
-        alt="Loading" 
-        className="w-48 h-48 object-contain"
-        animate={{
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-    </div>
-  ), []);
 
   const LayoutWrapper = useMemo(() => React.memo<{ children: React.ReactNode }>(({ children }) => (
     <div className="flex flex-col h-screen bg-neutral-900 text-neutral-100">
@@ -84,7 +61,11 @@ const AppContent: React.FC = () => {
         <Route path="/study-completion/:geniusSlug" element={<StudyCompletionPage />} />
         <Route path="/deck/:geniusSlug/match" element={<MatchStudyPage />} />
         <Route path="/deck/:geniusSlug/karaoke" element={<KaraokeStudyPage />} />
-        <Route path="/search" element={<SearchPage />} />
+        <Route path="/search" element={
+          <LayoutWrapper>
+            <SearchPage />
+          </LayoutWrapper>
+        } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthWrapper>

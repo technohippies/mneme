@@ -7,7 +7,7 @@ import { createUserSongService } from '../../services/orbis/userSongService';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
 import { useAuthenticateCeramic } from '../../services/orbis/authService';
 import { getCurrentUserDID } from '../../services/orbis/config';
-import { ExternalLink } from 'lucide-react';
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import { motion } from 'framer-motion';
 import loadingImage from '/images/loading-image.png';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +142,7 @@ const KeenSlider: React.FC<KeenSliderProps> = ({ songs, phrases }) => {
                   aria-label="Watch on Invidious"
                 >
                   <span>{`${getSongTitle(song)} - ${song.artist_name_original || 'Unknown Artist'}`}</span>
-                  <ExternalLink size={16} />
+                  <ArrowSquareOut size={16} weight="bold" />
                 </button>
               )}
               <div className="flex-grow">

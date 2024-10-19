@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import { WalletIcon } from 'lucide-react';
+import { Wallet } from "@phosphor-icons/react";
 
 interface ConnectWalletButtonProps {
   onClick: () => void;
@@ -19,7 +19,7 @@ export const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = ({
       disabled={isConnecting}
       className="px-4 py-2"
     >
-      <WalletIcon className="mr-2 h-4 w-4" />
+      <Wallet weight="fill" className="mr-2 h-4 w-4" />
       <span>
         {isConnecting ? 'Connecting...' : isConnected ? 'Initialize XMTP' : 'Connect Wallet'}
       </span>

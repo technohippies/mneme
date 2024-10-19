@@ -1,5 +1,5 @@
 import { db, ORBIS_WORD_MODEL_ID } from './config';
-import { Word } from '../../types';
+import { Word } from '../../types/index';
 
 // Define the OrderByParams type locally
 type OrderByParams = [string, "asc" | "desc"];

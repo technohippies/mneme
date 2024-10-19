@@ -1,6 +1,6 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { FlashcardProps, FlashcardRef } from '../../types';
-import { Volume2, Pause, Music } from 'lucide-react';
+import { SpeakerHigh, Pause, MusicNotes } from "@phosphor-icons/react";
 import { dotStream } from 'ldrs';
 import ReactCardFlip from 'react-card-flip';
 import { useSpring, animated } from 'react-spring';
@@ -82,7 +82,7 @@ export const Flashcard = forwardRef<FlashcardRef, FlashcardProps>((props, ref) =
     const renderAudioControl = (type: 'tts' | 'song') => {
         const isPlaying = type === 'tts' ? !!ttsAudio : !!songAudio;
         const isLoading = type === 'tts' ? ttsLoading : songLoading;
-        const Icon = type === 'tts' ? Volume2 : Music;
+        const Icon = type === 'tts' ? SpeakerHigh : MusicNotes;
 
         return (
             <div 
@@ -95,9 +95,9 @@ export const Flashcard = forwardRef<FlashcardRef, FlashcardProps>((props, ref) =
                 {isLoading ? (
                     <l-dot-stream size="20" speed="2.5" color="#FFFFFF"></l-dot-stream>
                 ) : isPlaying ? (
-                    <Pause className="w-6 h-6 text-neutral-300" />
+                    <Pause weight="fill" className="w-6 h-6 text-neutral-300" />
                 ) : (
-                    <Icon className="w-6 h-6 text-neutral-300" />
+                    <Icon weight="fill" className="w-6 h-6 text-neutral-300" />
                 )}
             </div>
         );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Music, Search, User } from 'lucide-react';
+import { MusicNotes, MagnifyingGlass, User } from "@phosphor-icons/react";
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 
@@ -22,7 +22,7 @@ const Footer: React.FC<FooterProps> = ({ className, ...props }) => {
         )}
       >
         <Link to={path}>
-          <Icon className="w-6 h-6" />
+          <Icon className="w-6 h-6" weight={isActive ? "fill" : "regular"} />
         </Link>
       </Button>
     );
@@ -36,8 +36,8 @@ const Footer: React.FC<FooterProps> = ({ className, ...props }) => {
       )}
       {...props}
     >
-      {renderIcon('/', Music)}
-      {renderIcon('/search', Search)}
+      {renderIcon('/', MusicNotes)}
+      {renderIcon('/search', MagnifyingGlass)}
       {renderIcon('/profile', User)}
     </div>
   );

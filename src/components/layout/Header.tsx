@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Flame, Settings } from 'lucide-react';
+import { Fire, Gear } from "@phosphor-icons/react";
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import { getStreakData } from '../../services/orbis/streakService';
-import { useTranslation } from 'react-i18next';
-import { SupportedLocale, languageNames } from '../../config/languages';
 
 interface HeaderProps {
   streakLink: string;
@@ -14,7 +12,6 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ settingsLink, userAddress }) => {
   const [currentStreak, setCurrentStreak] = useState(0);
-  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const fetchStreakData = async () => {
@@ -32,22 +29,6 @@ const Header: React.FC<HeaderProps> = ({ settingsLink, userAddress }) => {
     fetchStreakData();
   }, [userAddress]);
 
-  const getLocalizedLanguageText = () => {
-    const currentLang = i18n.language.split('-')[0] as SupportedLocale;
-    
-    // If the current language is English, return "Spanish for English"
-    if (currentLang === 'eng') {
-      return t('spanishForEnglish', 'Spanish for English');
-    }
-    
-    const nativeName = languageNames[currentLang]?.native || currentLang;
-    
-    // For other languages, use the "English for [Language]" format
-    return t('englishFor', { language: nativeName });
-  };
-
-  const languageText = getLocalizedLanguageText();
-
   return (
     <div className="flex items-center justify-between bg-neutral-900 border-b border-neutral-800 border-border p-4">
       <Button 
@@ -60,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ settingsLink, userAddress }) => {
           rel="noopener noreferrer" 
           className="flex items-center"
         >
-          <Flame className="w-5 h-5 mr-2" />
+          <Fire className="w-6 h-6 mr-2" weight="fill" />
           <span className="font-bold">{currentStreak}</span>
         </a>
       </Button>
@@ -69,8 +50,7 @@ const Header: React.FC<HeaderProps> = ({ settingsLink, userAddress }) => {
         className="bg-transparent text-neutral-300 hover:text-neutral-200 hover:bg-neutral-800 active:bg-neutral-700 active:text-neutral-100"
       >
         <Link to={settingsLink} className="flex items-center">
-          <span className="mr-2">{languageText}</span>
-          <Settings className="w-5 h-5" />
+          <Gear className="w-6 h-6" weight="fill" />
         </Link>
       </Button>
     </div>

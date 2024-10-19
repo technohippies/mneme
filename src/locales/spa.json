@@ -127,5 +127,13 @@
   
   "matchStudy": {
     "playAgain": "Jugar de Nuevo"
+  },
+  
+  "search": {
+    "title": "Buscar Canciones",
+    "placeholder": "Ingrese nombre de canción o artista",
+    "results": "Resultados de la Búsqueda",
+    "noResults": "No se encontraron canciones. Intente con un término de búsqueda diferente.",
+    "error": "Ocurrió un error durante la búsqueda. Por favor, intente de nuevo."
   }
 }

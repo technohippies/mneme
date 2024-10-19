@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "../ui/button";
-import { Volume2, Pause } from 'lucide-react';
+import { SpeakerHigh, Pause } from "@phosphor-icons/react";
 import { dotStream } from 'ldrs';
 
 dotStream.register();
@@ -56,9 +56,9 @@ const AudioButton: React.FC<AudioButtonProps> = ({ cid, label, onPlay }) => {
       {isLoading ? (
         <l-dot-stream size="20" speed="2.5" color="currentColor"></l-dot-stream>
       ) : isPlaying ? (
-        <Pause className="w-4 h-4 mr-2" />
+        <Pause weight="fill" className="w-4 h-4 mr-2" />
       ) : (
-        <Volume2 className="w-4 h-4 mr-2" />
+        <SpeakerHigh weight="fill" className="w-4 h-4 mr-2" />
       )}
       {label}
     </Button>

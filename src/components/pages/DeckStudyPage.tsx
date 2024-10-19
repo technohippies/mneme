@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { dotStream } from 'ldrs';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Volume2, Music, Pause } from 'lucide-react';;
+import { CaretLeft, SpeakerHigh, MusicNotes, Pause } from "@phosphor-icons/react";
 import { phraseService } from '../../services/orbis/phraseService';
 import { songService } from '../../services/orbis/songService';
 import { userLearningDataService } from '../../services/orbis/userDataLearningService';
@@ -58,7 +58,7 @@ const DeckStudyPage: React.FC = () => {
   const renderAudioControl = (cid: string, type: 'tts' | 'song') => {
     const isPlaying = playingAudio && playingAudio.src.includes(cid);
     const isLoading = loadingAudio === cid;
-    const Icon = type === 'tts' ? Volume2 : Music;
+    const Icon = type === 'tts' ? SpeakerHigh : MusicNotes;
 
     return (
       <div 
@@ -68,9 +68,9 @@ const DeckStudyPage: React.FC = () => {
         {isLoading ? (
           <l-dot-stream size="20" speed="2.5" color="#FFFFFF"></l-dot-stream>
         ) : isPlaying ? (
-          <Pause className="w-6 h-6 text-neutral-300" />
+          <Pause weight="fill" className="w-6 h-6 text-neutral-300" />
         ) : (
-          <Icon className="w-6 h-6 text-neutral-300" />
+          <Icon weight="fill" className="w-6 h-6 text-neutral-300" />
         )}
       </div>
     );
@@ -217,7 +217,7 @@ const DeckStudyPage: React.FC = () => {
           onClick={handleBack}
           className="p-4 text-neutral-100 hover:text-neutral-200"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <CaretLeft weight="fill" className="w-8 h-8" />
         </button>
         <div className="flex-grow p-4">
           <p className="text-red-500">{error || t('songStudy.songNotFound')}</p>
@@ -245,7 +245,7 @@ const DeckStudyPage: React.FC = () => {
             onClick={handleBack}
             className="absolute top-6 left-6 text-neutral-100 hover:text-neutral-200 z-20"
           >
-            <ArrowLeft className="w-8 h-8" />
+            <CaretLeft weight="fill" className="w-8 h-8" />
           </button>
           
           {/* Song info and status */}
@@ -351,7 +351,7 @@ function createDeckFromSong(song: Song): DeckType {
     episode: undefined,
     reference_url: undefined,
     target_language_2: undefined,
-    translatedTitles: song.translatedTitles, // Add this line
+    translatedTitles: song.translatedTitles ? { ...song.translatedTitles } : undefined,
   };
 }
 
